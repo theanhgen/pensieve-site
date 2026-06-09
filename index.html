@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pensieve — For what you carry.</title>
+  <meta name="description" content="Write a thought. Watch it fade. Let it go. Pensieve is a journaling app that forgets on purpose.">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <nav class="nav">
+    <div class="wrap">
+      <span class="nav-wordmark">Pensieve</span>
+      <a href="#faq" class="nav-link">FAQ</a>
+    </div>
+  </nav>
+
+  <section class="hero">
+    <div class="hero-inner">
+      <picture>
+        <source srcset="icon-dark.png" media="(prefers-color-scheme: dark)">
+        <img src="icon.png" alt="Pensieve app icon" class="app-icon-img">
+      </picture>
+      <h1 class="hero-title">Pensieve</h1>
+      <p class="hero-tagline">For what you carry.</p>
+      <p class="hero-sub">Some thoughts aren't meant to last.</p>
+      <!-- Replace href with App Store link when live -->
+      <a href="#" class="appstore-badge-link">
+        <img src="appstore-badge.svg" alt="Download on the App Store" class="appstore-badge">
+      </a>
+    </div>
+  </section>
+
+  <!-- Hero screenshot — notes list with fading notes -->
+  <section class="screenshot-hero">
+    <div class="wrap screenshot-hero-wrap">
+      <div class="phone-frame">
+        <div class="phone-island"></div>
+        <picture>
+          <source srcset="screenshots/notes-list-dark.png" media="(prefers-color-scheme: dark)">
+          <img src="screenshots/notes-list-light.png" alt="Pensieve notes list" class="phone-screen">
+        </picture>
+      </div>
+    </div>
+  </section>
+
+  <section class="mechanic">
+    <div class="wrap">
+      <div class="mechanic-step">
+        <span class="step-num">01</span>
+        <h3>Write</h3>
+        <p>Type what you're carrying. No title, no tag, no category.</p>
+      </div>
+      <div class="mechanic-step">
+        <span class="step-num">02</span>
+        <h3>Fade</h3>
+        <p>Your note fades as the hours pass. At 72, it's gone.</p>
+      </div>
+      <div class="mechanic-step mechanic-step--with-screen">
+        <span class="step-num">03</span>
+        <h3>Release</h3>
+        <p>Gone. No archive. No trace.</p>
+        <div class="phone-frame phone-frame--small">
+          <div class="phone-island"></div>
+          <picture>
+            <source srcset="screenshots/empty-state-dark.png" media="(prefers-color-scheme: dark)">
+            <img src="screenshots/empty-state-light.png" alt="Pensieve empty state" class="phone-screen">
+          </picture>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="features">
+    <div class="wrap">
+      <div class="features-header">
+        <h2>Built to forget.</h2>
+        <p>Most apps keep everything. Pensieve keeps nothing.</p>
+      </div>
+      <div class="features-grid">
+        <div class="feature-card">
+          <h3>72 hours,<br>then gone.</h3>
+          <p>Notes dissolve on their own. No decision to make — just let them.</p>
+        </div>
+        <div class="feature-card">
+          <h3>No archive,<br>no search.</h3>
+          <p>Nothing to scroll back through. The past doesn't follow you here.</p>
+        </div>
+        <div class="feature-card">
+          <h3>No account,<br>no sync.</h3>
+          <p>Stays on your device. Belongs to no one but you.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="widgets">
+    <div class="wrap">
+      <h2>See what's fading.</h2>
+      <p>Four widgets show what's fading — without opening the app.</p>
+      <div class="phone-frame phone-frame--small">
+        <div class="phone-island"></div>
+        <picture>
+          <source srcset="screenshots/widget-dark.png" media="(prefers-color-scheme: dark)">
+          <img src="screenshots/widget-light.png" alt="Pensieve widget on lock screen" class="phone-screen">
+        </picture>
+      </div>
+    </div>
+  </section>
+
+  <section class="privacy">
+    <div class="wrap">
+      <p><strong>Everything lives on your device.</strong><br>Nothing is stored, synced, or seen.</p>
+    </div>
+  </section>
+
+  <section class="faq" id="faq">
+    <div class="wrap">
+      <h2 class="faq-title">Questions</h2>
+      <div class="faq-list">
+        <div class="faq-item">
+          <button class="faq-question" aria-expanded="false">How long do notes last?</button>
+          <div class="faq-answer"><p>72 hours by default. You can adjust the duration in Settings, or extend individual notes from their context menu.</p></div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-question" aria-expanded="false">Can I recover a note after it expires?</button>
+          <div class="faq-answer"><p>No. When a note is gone, it's gone. That's not a bug — it's the whole point.</p></div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-question" aria-expanded="false">Does Pensieve back up to iCloud or sync across devices?</button>
+          <div class="faq-answer"><p>No. Notes live only on the device you wrote them on. Nothing leaves your phone.</p></div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-question" aria-expanded="false">What does pinning a note do?</button>
+          <div class="faq-answer"><p>Pinned notes don't expire until you unpin them. Use it for things you need to keep a little longer — but not forever.</p></div>
+        </div>
+        <div class="faq-item">
+          <!-- TODO: fill in pricing before launch -->
+          <button class="faq-question" aria-expanded="false">Is there a subscription or cost?</button>
+          <div class="faq-answer"><p>Pensieve is free to download.</p></div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-question" aria-expanded="false">What iOS version does it require?</button>
+          <div class="faq-answer"><p>iOS 17 or later.</p></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer class="footer">
+    <div class="wrap">
+      <span class="footer-name">Pensieve</span>
+      <span class="footer-legal">© 2026 Pensieve. All rights reserved.</span>
+    </div>
+  </footer>
+
+  <script>
+    document.querySelectorAll('.faq-item').forEach(item => {
+      const btn    = item.querySelector('.faq-question');
+      const answer = item.querySelector('.faq-answer');
+
+      btn.addEventListener('click', () => {
+        const isOpen = btn.getAttribute('aria-expanded') === 'true';
+
+        if (isOpen) {
+          answer.style.height = answer.scrollHeight + 'px';
+          requestAnimationFrame(() => { answer.style.height = '0'; });
+          answer.addEventListener('transitionend', () => {
+            item.classList.remove('is-open');
+            btn.setAttribute('aria-expanded', 'false');
+            answer.style.height = '';
+          }, { once: true });
+        } else {
+          item.classList.add('is-open');
+          btn.setAttribute('aria-expanded', 'true');
+          const h = answer.scrollHeight;
+          answer.style.height = '0';
+          requestAnimationFrame(() => { answer.style.height = h + 'px'; });
+          answer.addEventListener('transitionend', () => {
+            answer.style.height = '';
+          }, { once: true });
+        }
+      });
+    });
+  </script>
+</body>
+</html>
