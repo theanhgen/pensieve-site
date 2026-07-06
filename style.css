@@ -175,40 +175,41 @@ picture[data-reveal] { display: inline-block; }
 }
 
 /* ─ phone frame ─────────────────────────────────────────── */
+/* ─ device frame ─────────────────────────────────────────── */
+/* The frame is the phone body: a dark titanium bezel (via padding) with
+   the real screenshot inset inside it. Bezel stays dark in both themes,
+   like a real phone; the screenshot within is theme-aware. */
 .phone-frame {
   position: relative;
-  width: 260px;
-  border-radius: 44px;
-  border: 1.5px solid var(--rule);
-  overflow: hidden;
+  width: 264px;
+  padding: 11px;
+  border-radius: 54px;
   flex-shrink: 0;
+  background: linear-gradient(145deg, #34343a 0%, #0b0b0d 34%, #0b0b0d 66%, #34343a 100%);
   box-shadow:
-    rgba(0, 0, 0, 0.16) 0 4px 12px,
-    rgba(0, 0, 0, 0.30) 0 24px 60px,
-    inset 0 0 0 1px rgba(255, 255, 255, 0.04);
+    inset 0 0 0 1.5px rgba(255, 255, 255, 0.10),
+    rgba(0, 0, 0, 0.20) 0 6px 16px,
+    rgba(0, 0, 0, 0.34) 0 32px 70px;
 }
-/* Aspect ratio placeholder — iPhone ~19.5:9 */
-.phone-frame::before {
-  content: '';
+.phone-frame picture { display: block; line-height: 0; }
+.device-shot {
   display: block;
-  padding-top: 216%;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 800 / 1739;
+  object-fit: cover;
+  border-radius: 43px;   /* concentric: outer 54 − padding 11 */
+  background: var(--bg);
 }
 
 .phone-frame--small {
-  width: 180px;
-  border-radius: 32px;
+  width: 184px;
+  padding: 8px;
+  border-radius: 40px;
   margin-top: 24px;
 }
-/* ─ device screenshots ───────────────────────────────────── */
-/* Real app captures fill the frame; the frame supplies bezel + shadow.
-   The screenshot already includes the status bar and Dynamic Island. */
-.device-shot {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  display: block;
+.phone-frame--small .device-shot {
+  border-radius: 32px;   /* concentric: outer 40 − padding 8 */
 }
 
 /* ─ widget card (standalone home-screen widget preview) ──── */
@@ -605,8 +606,8 @@ html.js .faq-answer.is-open {
 
   .phone-frame {
     box-shadow:
-      rgba(0, 0, 0, 0.08) 0 4px 12px,
-      rgba(0, 0, 0, 0.14) 0 24px 60px,
-      inset 0 0 0 1px rgba(0, 0, 0, 0.04);
+      inset 0 0 0 1.5px rgba(255, 255, 255, 0.10),
+      rgba(0, 0, 0, 0.10) 0 6px 16px,
+      rgba(0, 0, 0, 0.16) 0 32px 70px;
   }
 }
