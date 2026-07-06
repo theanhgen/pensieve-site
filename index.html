@@ -5,184 +5,267 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Pensieve — For what you carry.</title>
   <meta name="description" content="Write a thought. Watch it fade. Let it go. Pensieve is a journaling app that forgets on purpose.">
+
+  <link rel="canonical" href="https://theanhgen.github.io/pensieve-site/">
+  <link rel="icon" href="icon.png">
+  <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)">
+
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://theanhgen.github.io/pensieve-site/">
+  <meta property="og:title" content="Pensieve — For what you carry.">
+  <meta property="og:description" content="A journaling app that forgets on purpose. Write a thought, watch it fade, let it go.">
+  <meta property="og:image" content="https://theanhgen.github.io/pensieve-site/icon.png">
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="Pensieve — For what you carry.">
+  <meta name="twitter:description" content="A journaling app that forgets on purpose.">
+  <meta name="twitter:image" content="https://theanhgen.github.io/pensieve-site/icon.png">
+
   <link rel="stylesheet" href="style.css">
+  <script>document.documentElement.classList.add('js');</script>
 </head>
 <body>
 
-  <nav class="nav">
+  <nav class="nav" aria-label="Primary">
     <div class="wrap">
       <span class="nav-wordmark">Pensieve</span>
       <a href="#faq" class="nav-link">FAQ</a>
     </div>
   </nav>
 
-  <section class="hero">
-    <div class="hero-inner">
-      <picture>
-        <source srcset="icon-dark.png" media="(prefers-color-scheme: dark)">
-        <img src="icon.png" alt="Pensieve app icon" class="app-icon-img">
-      </picture>
-      <h1 class="hero-title">Pensieve</h1>
-      <p class="hero-tagline">For what you carry.</p>
-      <p class="hero-sub">Some thoughts aren't meant to last.</p>
-      <!-- Replace href with App Store link when live -->
-      <a href="#" class="appstore-badge-link">
-        <img src="appstore-badge.svg" alt="Download on the App Store" class="appstore-badge">
-      </a>
-    </div>
-  </section>
-
-  <!-- Hero screenshot — notes list with fading notes -->
-  <section class="screenshot-hero">
-    <div class="wrap screenshot-hero-wrap">
-      <div class="phone-frame">
-        <div class="phone-island"></div>
-        <picture>
-          <source srcset="screenshots/notes-list-dark.png" media="(prefers-color-scheme: dark)">
-          <img src="screenshots/notes-list-light.png" alt="Pensieve notes list" class="phone-screen">
+  <main>
+    <section class="hero">
+      <div class="hero-inner">
+        <picture data-reveal style="--d:0ms">
+          <source srcset="icon-dark.png" media="(prefers-color-scheme: dark)">
+          <img src="icon.png" alt="Pensieve app icon" class="app-icon-img" width="112" height="112">
         </picture>
+        <h1 class="hero-title" data-reveal style="--d:60ms">Pensieve</h1>
+        <p class="hero-tagline" data-reveal style="--d:120ms">For what you carry.</p>
+        <p class="hero-sub" data-reveal style="--d:180ms">Some thoughts aren't meant to last.</p>
+        <div class="hero-cta" data-reveal style="--d:240ms">
+          <img src="appstore-badge.svg" alt="Download on the App Store" class="appstore-badge" width="146" height="48">
+          <span class="hero-cta-note">Coming soon</span>
+        </div>
       </div>
-    </div>
-  </section>
+    </section>
 
-  <section class="mechanic">
-    <div class="wrap">
-      <div class="mechanic-step">
-        <span class="step-num">01</span>
-        <h3>Write</h3>
-        <p>Type what you're carrying. No title, no tag, no category.</p>
-      </div>
-      <div class="mechanic-step">
-        <span class="step-num">02</span>
-        <h3>Fade</h3>
-        <p>Your note fades as the hours pass. At 72, it's gone.</p>
-      </div>
-      <div class="mechanic-step mechanic-step--with-screen">
-        <span class="step-num">03</span>
-        <h3>Release</h3>
-        <p>Gone. No archive. No trace.</p>
-        <div class="phone-frame phone-frame--small">
+    <!-- Hero mockup — fading notes list -->
+    <section class="screenshot-hero">
+      <div class="wrap screenshot-hero-wrap">
+        <div class="phone-frame" data-reveal role="img" aria-label="The Pensieve notes list, with older notes fading away as they near expiry">
           <div class="phone-island"></div>
-          <picture>
-            <source srcset="screenshots/empty-state-dark.png" media="(prefers-color-scheme: dark)">
-            <img src="screenshots/empty-state-light.png" alt="Pensieve empty state" class="phone-screen">
-          </picture>
+          <div class="mock-screen mock--notes">
+            <div class="mock-statusbar">
+              <span class="mock-statusbar-time">9:41</span>
+              <span class="mock-statusbar-icons"><span class="mock-battery"></span></span>
+            </div>
+            <div class="mock-daylabel">Today</div>
+            <div class="mock-note" style="--o:1">
+              <p>Ask Dad about the boiler warranty</p>
+              <span class="mock-note-meta">fades in 68h</span>
+            </div>
+            <div class="mock-note" style="--o:0.72">
+              <p>That line for the toast — "barely audible voices"</p>
+              <span class="mock-note-meta">fades in 41h</span>
+            </div>
+            <div class="mock-note" style="--o:0.5">
+              <p>Book the dentist</p>
+              <span class="mock-note-meta">fades in 18h</span>
+            </div>
+            <div class="mock-note" style="--o:0.32">
+              <p>Breathe. It's fine.</p>
+              <span class="mock-note-meta">fades in 3h</span>
+            </div>
+            <div class="mock-capturebar">Write a thought…</div>
+            <div class="mock-home-indicator"></div>
+          </div>
         </div>
       </div>
-    </div>
-  </section>
+    </section>
 
-  <section class="features">
-    <div class="wrap">
-      <div class="features-header">
-        <h2>Built to forget.</h2>
-        <p>Most apps keep everything. Pensieve keeps nothing.</p>
+    <section class="mechanic">
+      <h2 class="visually-hidden">How Pensieve works</h2>
+      <div class="wrap">
+        <div class="mechanic-step" data-reveal style="--d:0ms">
+          <span class="step-num">01</span>
+          <h3>Write</h3>
+          <p>Type what you're carrying. No title, no tag, no category.</p>
+        </div>
+        <div class="mechanic-step" data-reveal style="--d:90ms">
+          <span class="step-num">02</span>
+          <h3>Fade</h3>
+          <p>Your note fades as the hours pass. By default, it's gone in 72.</p>
+        </div>
+        <div class="mechanic-step mechanic-step--with-screen" data-reveal style="--d:180ms">
+          <span class="step-num">03</span>
+          <h3>Release</h3>
+          <p>Gone. No archive. Nothing to scroll back to.</p>
+          <div class="phone-frame phone-frame--small" role="img" aria-label="The Pensieve empty state after a note is released">
+            <div class="phone-island"></div>
+            <div class="mock-screen mock--empty">
+              <div class="mock-empty-mark"></div>
+              <p class="mock-empty-text">Nothing to hold onto right now.</p>
+              <div class="mock-home-indicator"></div>
+            </div>
+          </div>
+        </div>
       </div>
-      <div class="features-grid">
-        <div class="feature-card">
-          <h3>72 hours,<br>then gone.</h3>
-          <p>Notes dissolve on their own. No decision to make — just let them.</p>
-        </div>
-        <div class="feature-card">
-          <h3>No archive,<br>no search.</h3>
-          <p>Nothing to scroll back through. The past doesn't follow you here.</p>
-        </div>
-        <div class="feature-card">
-          <h3>No account,<br>no sync.</h3>
-          <p>Stays on your device. Belongs to no one but you.</p>
-        </div>
-      </div>
-    </div>
-  </section>
+    </section>
 
-  <section class="widgets">
-    <div class="wrap">
-      <h2>See what's fading.</h2>
-      <p>Four widgets show what's fading — without opening the app.</p>
-      <div class="phone-frame phone-frame--small">
-        <div class="phone-island"></div>
-        <picture>
-          <source srcset="screenshots/widget-dark.png" media="(prefers-color-scheme: dark)">
-          <img src="screenshots/widget-light.png" alt="Pensieve widget on lock screen" class="phone-screen">
-        </picture>
-      </div>
-    </div>
-  </section>
-
-  <section class="privacy">
-    <div class="wrap">
-      <p><strong>Everything lives on your device.</strong><br>Nothing is stored, synced, or seen.</p>
-    </div>
-  </section>
-
-  <section class="faq" id="faq">
-    <div class="wrap">
-      <h2 class="faq-title">Questions</h2>
-      <div class="faq-list">
-        <div class="faq-item">
-          <button class="faq-question" aria-expanded="false">How long do notes last?</button>
-          <div class="faq-answer"><p>72 hours by default. You can adjust the duration in Settings, or extend individual notes from their context menu.</p></div>
+    <section class="features">
+      <div class="wrap">
+        <div class="features-header" data-reveal>
+          <h2>Built to forget.</h2>
+          <p>Most apps keep everything. Pensieve keeps only what you choose.</p>
         </div>
-        <div class="faq-item">
-          <button class="faq-question" aria-expanded="false">Can I recover a note after it expires?</button>
-          <div class="faq-answer"><p>No. When a note is gone, it's gone. That's not a bug — it's the whole point.</p></div>
-        </div>
-        <div class="faq-item">
-          <button class="faq-question" aria-expanded="false">Does Pensieve back up to iCloud or sync across devices?</button>
-          <div class="faq-answer"><p>No. Notes live only on the device you wrote them on. Nothing leaves your phone.</p></div>
-        </div>
-        <div class="faq-item">
-          <button class="faq-question" aria-expanded="false">What does pinning a note do?</button>
-          <div class="faq-answer"><p>Pinned notes don't expire until you unpin them. Use it for things you need to keep a little longer — but not forever.</p></div>
-        </div>
-        <div class="faq-item">
-          <!-- TODO: fill in pricing before launch -->
-          <button class="faq-question" aria-expanded="false">Is there a subscription or cost?</button>
-          <div class="faq-answer"><p>Pensieve is free to download.</p></div>
-        </div>
-        <div class="faq-item">
-          <button class="faq-question" aria-expanded="false">What iOS version does it require?</button>
-          <div class="faq-answer"><p>iOS 17 or later.</p></div>
+        <div class="features-grid">
+          <div class="feature-card" data-reveal style="--d:0ms">
+            <h3>72 hours,<br>then gone.</h3>
+            <p>Notes dissolve on their own. No decision to make — just let them.</p>
+          </div>
+          <div class="feature-card" data-reveal style="--d:90ms">
+            <h3>No archive,<br>no search.</h3>
+            <p>Nothing to scroll back through. The past doesn't follow you here.</p>
+          </div>
+          <div class="feature-card" data-reveal style="--d:180ms">
+            <h3>No account,<br>no tracking.</h3>
+            <p>No sign-up, no ads, no analytics. Your notes never touch a server of ours — we don't have any.</p>
+          </div>
         </div>
       </div>
-    </div>
-  </section>
+    </section>
+
+    <section class="widgets">
+      <div class="wrap">
+        <h2 data-reveal>See what's fading.</h2>
+        <p data-reveal style="--d:80ms">Widgets show what's slipping away — without opening the app.</p>
+        <div class="phone-frame phone-frame--small" data-reveal style="--d:160ms" role="img" aria-label="A Pensieve widget on the lock screen showing notes that are fading">
+          <div class="phone-island"></div>
+          <div class="mock-screen mock--lock">
+            <span class="mock-date">Sunday, 5 July</span>
+            <div class="mock-clock">9:41</div>
+            <div class="mock-widget">
+              <span class="mock-widget-title">Fading</span>
+              <span class="mock-widget-line" style="--o:0.85">Book the dentist</span>
+              <span class="mock-widget-line" style="--o:0.55">Breathe. It's fine.</span>
+            </div>
+            <div class="mock-home-indicator"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="privacy">
+      <div class="wrap" data-reveal>
+        <p><strong>Private by design.</strong><br>Your notes live on your device. Turn on iCloud sync and they travel only through your own private iCloud — never through us.</p>
+        <a href="privacy.html" class="privacy-link">Read the privacy policy →</a>
+      </div>
+    </section>
+
+    <section class="faq" id="faq">
+      <div class="wrap">
+        <h2 class="faq-title" data-reveal>Questions</h2>
+        <div class="faq-list">
+          <div class="faq-item" data-reveal style="--d:0ms">
+            <h3 class="faq-heading">
+              <button class="faq-question" aria-expanded="false" aria-controls="faq-a1">How long do notes last?</button>
+            </h3>
+            <div class="faq-answer" id="faq-a1"><div class="faq-answer-inner">
+              <p>72 hours by default. You can change the duration in Settings, or extend an individual note from its menu. Pin a note and it won't fade at all until you unpin it.</p>
+            </div></div>
+          </div>
+          <div class="faq-item" data-reveal style="--d:40ms">
+            <h3 class="faq-heading">
+              <button class="faq-question" aria-expanded="false" aria-controls="faq-a2">Can I get a note back after it fades?</button>
+            </h3>
+            <div class="faq-answer" id="faq-a2"><div class="faq-answer-inner">
+              <p>No. When a note fades out on its own, it's gone for good — that's the whole point. Notes you delete by hand rest in Trash for 30 days first, in case you change your mind.</p>
+            </div></div>
+          </div>
+          <div class="faq-item" data-reveal style="--d:80ms">
+            <h3 class="faq-heading">
+              <button class="faq-question" aria-expanded="false" aria-controls="faq-a3">Does Pensieve sync across my devices?</button>
+            </h3>
+            <div class="faq-answer" id="faq-a3"><div class="faq-answer-inner">
+              <p>Only if you ask it to. iCloud sync is off by default. Turn it on and your notes sync across your own Apple devices through your private iCloud — never through any server of ours.</p>
+            </div></div>
+          </div>
+          <div class="faq-item" data-reveal style="--d:120ms">
+            <h3 class="faq-heading">
+              <button class="faq-question" aria-expanded="false" aria-controls="faq-a4">What does pinning a note do?</button>
+            </h3>
+            <div class="faq-answer" id="faq-a4"><div class="faq-answer-inner">
+              <p>Pinned notes don't fade until you unpin them. Use it for things you need to keep a little longer — but not forever.</p>
+            </div></div>
+          </div>
+          <div class="faq-item" data-reveal style="--d:160ms">
+            <h3 class="faq-heading">
+              <button class="faq-question" aria-expanded="false" aria-controls="faq-a5">Is there a subscription or cost?</button>
+            </h3>
+            <div class="faq-answer" id="faq-a5"><div class="faq-answer-inner">
+              <p>Pensieve is free to download.</p>
+            </div></div>
+          </div>
+          <div class="faq-item" data-reveal style="--d:200ms">
+            <h3 class="faq-heading">
+              <button class="faq-question" aria-expanded="false" aria-controls="faq-a6">What iOS version does it require?</button>
+            </h3>
+            <div class="faq-answer" id="faq-a6"><div class="faq-answer-inner">
+              <p>iOS 17 or later.</p>
+            </div></div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
 
   <footer class="footer">
     <div class="wrap">
       <span class="footer-name">Pensieve</span>
+      <nav class="footer-links" aria-label="Footer">
+        <a href="privacy.html" class="footer-link">Privacy</a>
+        <a href="#faq" class="footer-link">FAQ</a>
+        <a href="mailto:bibybi@icloud.com" class="footer-link">Contact</a>
+      </nav>
       <span class="footer-legal">© 2026 Pensieve. All rights reserved.</span>
     </div>
   </footer>
 
   <script>
-    document.querySelectorAll('.faq-item').forEach(item => {
-      const btn    = item.querySelector('.faq-question');
-      const answer = item.querySelector('.faq-answer');
-
+    // FAQ accordion — grid-rows transition, no transitionend races.
+    document.querySelectorAll('.faq-question').forEach(btn => {
+      const answer = document.getElementById(btn.getAttribute('aria-controls'));
       btn.addEventListener('click', () => {
-        const isOpen = btn.getAttribute('aria-expanded') === 'true';
-
-        if (isOpen) {
-          answer.style.height = answer.scrollHeight + 'px';
-          requestAnimationFrame(() => { answer.style.height = '0'; });
-          answer.addEventListener('transitionend', () => {
-            item.classList.remove('is-open');
-            btn.setAttribute('aria-expanded', 'false');
-            answer.style.height = '';
-          }, { once: true });
-        } else {
-          item.classList.add('is-open');
-          btn.setAttribute('aria-expanded', 'true');
-          const h = answer.scrollHeight;
-          answer.style.height = '0';
-          requestAnimationFrame(() => { answer.style.height = h + 'px'; });
-          answer.addEventListener('transitionend', () => {
-            answer.style.height = '';
-          }, { once: true });
-        }
+        const open = btn.getAttribute('aria-expanded') === 'true';
+        btn.setAttribute('aria-expanded', String(!open));
+        if (answer) answer.classList.toggle('is-open', !open);
       });
     });
+
+    // Scroll reveal — reveal once, respect reduced motion, fail open.
+    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const reveals = document.querySelectorAll('[data-reveal]');
+    if (reduce || !('IntersectionObserver' in window)) {
+      reveals.forEach(el => el.classList.add('is-in'));
+    } else {
+      const io = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('is-in');
+            io.unobserve(entry.target);
+          }
+        });
+      }, { rootMargin: '0px 0px -8% 0px', threshold: 0 });
+      reveals.forEach(el => io.observe(el));
+      // Safety net: never leave content hidden if the observer misfires.
+      window.addEventListener('load', () => setTimeout(() => {
+        reveals.forEach(el => {
+          const r = el.getBoundingClientRect();
+          if (r.top < window.innerHeight && r.bottom > 0) el.classList.add('is-in');
+        });
+      }, 1200));
+    }
   </script>
 </body>
 </html>

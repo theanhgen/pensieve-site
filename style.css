@@ -1,7 +1,7 @@
 :root {
   --bg:         #000000;
-  --bg-2:       #111111;
   --bg-card:    #1a1a1a;
+  --mock-bg:    #0b0b0b;
   --ink:        #f5f5f7;
   --muted:      #86868b;
   --rule:       #2d2d2d;
@@ -14,6 +14,12 @@
   --r-card: 18px;
   --r-pill: 9999px;
   --r-icon: 26px;
+
+  /* Strong custom easings — the built-in CSS curves are too weak. */
+  --ease-out:    cubic-bezier(0.23, 1, 0.32, 1);
+  --ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);
+
+  color-scheme: light dark;
 }
 
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -23,8 +29,32 @@ body {
   background: var(--bg);
   color: var(--ink);
   -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 a { text-decoration: none; color: inherit; }
+
+/* Typographic defaults — balance headings, keep body from orphaning. */
+h1, h2, h3 { text-wrap: balance; }
+p { text-wrap: pretty; }
+
+/* Consistent, branded focus ring across every interactive element. */
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px; height: 1px;
+  padding: 0; margin: -1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+section { scroll-margin-top: 64px; }
 
 /* ─ wrap ─────────────────────────────────────────────────── */
 .wrap {
@@ -32,6 +62,22 @@ a { text-decoration: none; color: inherit; }
   margin: 0 auto;
   padding: 0 24px;
 }
+
+/* ─ scroll reveal ────────────────────────────────────────── */
+/* Only hide when JS is present; without JS everything shows immediately. */
+html.js [data-reveal] {
+  opacity: 0;
+  transform: translateY(16px);
+  transition:
+    opacity   0.6s var(--ease-out) var(--d, 0ms),
+    transform 0.6s var(--ease-out) var(--d, 0ms);
+}
+html.js [data-reveal].is-in {
+  opacity: 1;
+  transform: none;
+}
+/* picture/img are inline — transform is ignored unless made block-level. */
+picture[data-reveal] { display: inline-block; }
 
 /* ─ nav ──────────────────────────────────────────────────── */
 .nav {
@@ -59,9 +105,8 @@ a { text-decoration: none; color: inherit; }
   font-size: 14px;
   font-weight: 400;
   color: var(--accent);
-  transition: opacity 0.15s;
+  transition: opacity 0.15s var(--ease-out);
 }
-.nav-link:hover { opacity: 0.7; }
 
 /* ─ hero ─────────────────────────────────────────────────── */
 .hero {
@@ -105,20 +150,29 @@ a { text-decoration: none; color: inherit; }
   color: var(--muted);
   max-width: 400px;
 }
-.appstore-badge-link {
-  display: inline-block;
-  margin-top: 8px;
-  transition: opacity 0.15s, transform 0.1s;
+/* Honest pre-launch CTA — the badge is not a link yet. */
+.hero-cta {
+  margin-top: 12px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
 }
-.appstore-badge-link:hover  { opacity: 0.82; }
-.appstore-badge-link:active { transform: scale(0.97); }
 .appstore-badge {
   height: 48px;
   width: auto;
   display: block;
+  opacity: 0.9;
 }
 @media (prefers-color-scheme: dark) {
   .appstore-badge { filter: invert(1); }
+}
+.hero-cta-note {
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  color: var(--accent);
+  text-transform: uppercase;
 }
 
 /* ─ phone frame ─────────────────────────────────────────── */
@@ -129,6 +183,10 @@ a { text-decoration: none; color: inherit; }
   border: 1.5px solid var(--rule);
   overflow: hidden;
   flex-shrink: 0;
+  box-shadow:
+    rgba(0, 0, 0, 0.16) 0 4px 12px,
+    rgba(0, 0, 0, 0.30) 0 24px 60px,
+    inset 0 0 0 1px rgba(255, 255, 255, 0.04);
 }
 /* Aspect ratio placeholder — iPhone ~19.5:9 */
 .phone-frame::before {
@@ -151,22 +209,192 @@ a { text-decoration: none; color: inherit; }
   height: 28px;
   background: #000;
   border-radius: 20px;
-  z-index: 2;
+  z-index: 3;
 }
 .phone-frame--small .phone-island {
   width: 62px;
   height: 20px;
   top: 8px;
 }
-.phone-screen {
+
+/* ─ CSS device mockups ───────────────────────────────────── */
+/* Stand-ins for real screenshots: on-brand, theme-aware, and they
+   demonstrate the fade mechanic live. Swap for real captures later. */
+.mock-screen {
   position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  display: block;
+  inset: 0;
+  background: var(--mock-bg);
+  display: flex;
+  flex-direction: column;
+  padding: 48px 14px 22px;
+  gap: 8px;
+  overflow: hidden;
+  text-align: left;
 }
+.phone-frame--small .mock-screen { padding: 32px 10px 16px; gap: 6px; }
+
+/* Status bar + home indicator — the chrome that sells "real screenshot". */
+.mock-statusbar {
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 22px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: var(--ink);
+  z-index: 1;
+}
+.phone-frame--small .mock-statusbar { height: 30px; padding: 0 13px; font-size: 8px; }
+.mock-statusbar-time { font-variant-numeric: tabular-nums; }
+.mock-battery {
+  width: 18px; height: 9px;
+  border: 1px solid currentColor;
+  border-radius: 2.5px;
+  opacity: 0.85;
+  position: relative;
+}
+.mock-battery::after {
+  content: '';
+  position: absolute;
+  top: 1.5px; left: 1.5px; bottom: 1.5px;
+  width: 62%;
+  background: currentColor;
+  border-radius: 1px;
+}
+.phone-frame--small .mock-battery { width: 13px; height: 7px; }
+
+.mock-home-indicator {
+  position: absolute;
+  bottom: 8px; left: 50%;
+  transform: translateX(-50%);
+  width: 36%;
+  height: 4px;
+  border-radius: 2px;
+  background: var(--ink);
+  opacity: 0.24;
+  z-index: 2;
+}
+.phone-frame--small .mock-home-indicator { height: 3px; bottom: 6px; }
+
+.mock-daylabel {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: var(--muted);
+  padding: 0 6px 2px;
+}
+.phone-frame--small .mock-daylabel { font-size: 8px; }
+
+.mock-note {
+  background: var(--bg-card);
+  border-radius: 14px;
+  padding: 11px 13px;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  opacity: var(--o, 1);
+}
+.phone-frame--small .mock-note { border-radius: 10px; padding: 8px 10px; gap: 3px; }
+.mock-note p {
+  font-size: 13px;
+  line-height: 1.35;
+  letter-spacing: -0.01em;
+  color: var(--ink);
+}
+.phone-frame--small .mock-note p { font-size: 9px; }
+.mock-note-meta { font-size: 10px; color: var(--muted); }
+.phone-frame--small .mock-note-meta { font-size: 7px; }
+
+.mock-capturebar {
+  margin-top: auto;
+  background: var(--bg-card);
+  border-radius: var(--r-pill);
+  padding: 12px 15px;
+  font-size: 12px;
+  color: var(--muted);
+  display: flex;
+  align-items: center;
+  gap: 9px;
+}
+.mock-capturebar::before {
+  content: '';
+  width: 15px;
+  height: 15px;
+  flex-shrink: 0;
+  background: var(--accent);
+  opacity: 0.9;
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M8 3v10M3 8h10' stroke='black' stroke-width='1.6' stroke-linecap='round'/%3E%3C/svg%3E") center / contain no-repeat;
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M8 3v10M3 8h10' stroke='black' stroke-width='1.6' stroke-linecap='round'/%3E%3C/svg%3E") center / contain no-repeat;
+}
+.phone-frame--small .mock-capturebar { font-size: 8px; padding: 8px 10px; gap: 6px; }
+.phone-frame--small .mock-capturebar::before { width: 10px; height: 10px; }
+
+/* Empty state */
+.mock-screen.mock--empty { align-items: center; justify-content: center; padding: 20px; }
+.mock-empty-mark {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  border: 1.5px solid var(--rule);
+  margin-bottom: 14px;
+  opacity: 0.7;
+}
+.mock-empty-text {
+  font-size: 12px;
+  color: var(--muted);
+  text-align: center;
+  line-height: 1.5;
+  max-width: 130px;
+}
+.phone-frame--small .mock-empty-text { font-size: 9px; }
+.phone-frame--small .mock-empty-mark { width: 24px; height: 24px; }
+
+/* Lock-screen widget */
+.mock-screen.mock--lock {
+  align-items: center;
+  justify-content: flex-start;
+  padding-top: 44px;
+  gap: 2px;
+  background:
+    radial-gradient(120% 75% at 50% 0%, rgba(176, 144, 112, 0.18), transparent 62%),
+    var(--mock-bg);
+}
+.mock-date { font-size: 11px; color: var(--muted); margin-top: 4px; }
+.phone-frame--small .mock-date { font-size: 8px; }
+.mock-clock {
+  font-size: 46px;
+  font-weight: 600;
+  letter-spacing: -0.03em;
+  line-height: 1;
+  color: var(--ink);
+  font-variant-numeric: tabular-nums;
+  margin-bottom: 18px;
+}
+.phone-frame--small .mock-clock { font-size: 34px; margin-bottom: 14px; }
+.mock-widget {
+  width: 100%;
+  background: var(--bg-card);
+  border-radius: 16px;
+  padding: 12px 13px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.phone-frame--small .mock-widget { border-radius: 13px; padding: 9px 10px; gap: 4px; }
+.mock-widget-title {
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+.phone-frame--small .mock-widget-title { font-size: 6.5px; }
+.mock-widget-line { font-size: 11px; line-height: 1.3; color: var(--ink); opacity: var(--o, 1); }
+.phone-frame--small .mock-widget-line { font-size: 8px; }
 
 /* ─ hero screenshot ──────────────────────────────────────── */
 .screenshot-hero {
@@ -304,12 +532,19 @@ a { text-decoration: none; color: inherit; }
   line-height: 1.4;
   letter-spacing: -0.02em;
   color: var(--muted);
-  max-width: 520px;
+  max-width: 560px;
   margin: 0 auto;
 }
 .privacy p strong {
   color: var(--ink);
   font-weight: 400;
+}
+.privacy-link {
+  display: inline-block;
+  margin-top: 24px;
+  font-size: 15px;
+  color: var(--accent);
+  transition: opacity 0.15s var(--ease-out);
 }
 
 /* ─ faq ──────────────────────────────────────────────────── */
@@ -328,10 +563,15 @@ a { text-decoration: none; color: inherit; }
   max-width: 640px;
 }
 .faq-item {
-  border-top: 1px solid rgba(128, 128, 128, 0.15);
+  border-top: 1px solid var(--rule);
 }
 .faq-item:last-child {
-  border-bottom: 1px solid rgba(128, 128, 128, 0.15);
+  border-bottom: 1px solid var(--rule);
+}
+.faq-heading {
+  margin: 0;
+  font: inherit;
+  font-weight: inherit;
 }
 .faq-question {
   display: flex;
@@ -349,7 +589,7 @@ a { text-decoration: none; color: inherit; }
   border: none;
   cursor: pointer;
   text-align: left;
-  user-select: none;
+  transition: opacity 0.15s var(--ease-out);
 }
 .faq-question::after {
   content: '';
@@ -359,17 +599,33 @@ a { text-decoration: none; color: inherit; }
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M8 3v10M3 8h10' stroke='%2386868b' stroke-width='1.5' stroke-linecap='round'/%3E%3C/svg%3E");
   background-size: contain;
   background-repeat: no-repeat;
-  transition: transform 0.28s ease;
+  transition: transform 0.24s var(--ease-out);
 }
 .faq-question[aria-expanded="true"]::after {
   transform: rotate(45deg);
 }
+/* Accordion via grid-template-rows — interruptible, no transitionend races.
+   Base (no JS) is OPEN so answers are always reachable. */
 .faq-answer {
-  overflow: hidden;
-  height: 0;
-  transition: height 0.32s ease;
+  display: grid;
+  grid-template-rows: 1fr;
 }
-.faq-answer > p {
+.faq-answer-inner { overflow: hidden; }
+html.js .faq-answer {
+  grid-template-rows: 0fr;
+  visibility: hidden;
+  transition:
+    grid-template-rows 0.24s var(--ease-out),
+    visibility 0s linear 0.24s;
+}
+html.js .faq-answer.is-open {
+  grid-template-rows: 1fr;
+  visibility: visible;
+  transition:
+    grid-template-rows 0.24s var(--ease-out),
+    visibility 0s;
+}
+.faq-answer > .faq-answer-inner > p {
   font-size: 15px;
   font-weight: 400;
   line-height: 1.6;
@@ -386,6 +642,8 @@ a { text-decoration: none; color: inherit; }
   display: flex;
   align-items: center;
   justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
 }
 .footer-name {
   font-size: 14px;
@@ -393,15 +651,45 @@ a { text-decoration: none; color: inherit; }
   color: var(--ink);
   letter-spacing: -0.01em;
 }
+.footer-links {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+.footer-link {
+  font-size: 13px;
+  color: var(--muted);
+  transition: color 0.15s var(--ease-out);
+}
 .footer-legal {
   font-size: 12px;
   color: var(--muted);
+  flex-basis: 100%;
+}
+
+/* ─ hover (pointer devices only, avoids sticky hover on touch) ─ */
+@media (hover: hover) and (pointer: fine) {
+  .nav-link:hover     { opacity: 0.7; }
+  .privacy-link:hover { opacity: 0.7; }
+  .faq-question:hover { opacity: 0.7; }
+  .footer-link:hover  { color: var(--ink); }
 }
 
 /* ─ responsive ───────────────────────────────────────────── */
 @media (max-width: 640px) {
+  /* Let .wrap own the horizontal gutter; sections drop side padding. */
+  .hero,
+  .screenshot-hero,
+  .mechanic,
+  .features,
+  .widgets,
+  .privacy,
+  .faq { padding-left: 0; padding-right: 0; }
+  .nav .wrap { padding: 0 20px; }
+
   .hero-title  { font-size: 52px; }
   .hero-tagline { font-size: 21px; }
+  .privacy p { font-size: 23px; }
 
   .mechanic .wrap,
   .features-grid {
@@ -422,7 +710,7 @@ a { text-decoration: none; color: inherit; }
 
   .footer .wrap {
     flex-direction: column;
-    gap: 8px;
+    gap: 12px;
     align-items: flex-start;
   }
 }
@@ -440,12 +728,28 @@ a { text-decoration: none; color: inherit; }
   .feature-card { border-radius: 0; }
 }
 
+/* ─ reduced motion ───────────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  html.js [data-reveal] {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+  .faq-answer,
+  html.js .faq-answer,
+  html.js .faq-answer.is-open,
+  .faq-question::after {
+    transition: none;
+  }
+}
+
 /* ─ light mode ───────────────────────────────────────────── */
 @media (prefers-color-scheme: light) {
   :root {
     --bg:          #ffffff;
-    --bg-2:        #f5f5f7;
     --bg-card:     #f5f5f7;
+    --mock-bg:     #ffffff;
     --ink:         #1d1d1f;
     --muted:       #6e6e73;
     --rule:        #d2d2d7;
@@ -454,8 +758,10 @@ a { text-decoration: none; color: inherit; }
     --icon-shadow: rgba(0, 0, 0, 0.12) 0 8px 40px;
   }
 
-  .btn {
-    background: var(--ink);
-    color: #ffffff;
+  .phone-frame {
+    box-shadow:
+      rgba(0, 0, 0, 0.08) 0 4px 12px,
+      rgba(0, 0, 0, 0.14) 0 24px 60px,
+      inset 0 0 0 1px rgba(0, 0, 0, 0.04);
   }
 }
