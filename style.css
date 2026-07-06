@@ -230,35 +230,71 @@ picture[data-reveal] { display: inline-block; }
   border-radius: 34px;   /* concentric: outer 40 − padding 6 */
 }
 
-/* ─ widget card (standalone home-screen widget preview) ──── */
-.widget-card {
-  width: 260px;
+/* ─ Fading home-screen widget (matches the real app widget) ─ */
+/* Colors, 3px accent bar, section header, and per-note fade opacity all
+   mirror PensieveWidget's FadingWidgetView (PensievePaper/Ink/Muted/Release). */
+.app-widget {
+  --w-paper: #f6f3ed;
+  --w-ink:   #221a12;
+  --w-muted: #7e6c5b;
+  --w-bar:   #744f34;
+  width: 340px;
+  max-width: 100%;
   margin-top: 8px;
-  background: var(--bg-card);
-  border-radius: 22px;
-  padding: 18px 20px;
+  background: var(--w-paper);
+  border-radius: 28px;
+  padding: 17px 19px;
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 11px;
   text-align: left;
   box-shadow:
-    rgba(0, 0, 0, 0.16) 0 4px 12px,
-    rgba(0, 0, 0, 0.24) 0 18px 44px,
-    inset 0 0 0 1px rgba(255, 255, 255, 0.05);
+    rgba(0, 0, 0, 0.10) 0 6px 18px,
+    rgba(0, 0, 0, 0.16) 0 22px 50px;
 }
-.widget-card-title {
-  font-size: 11px;
-  font-weight: 600;
-  letter-spacing: 0.12em;
+.app-widget-label {
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.06em;
   text-transform: uppercase;
-  color: var(--accent);
+  color: var(--w-muted);
 }
-.widget-card-line {
-  font-size: 16px;
-  line-height: 1.3;
-  letter-spacing: -0.01em;
-  color: var(--ink);
+.app-widget-note {
+  display: flex;
+  gap: 9px;
+  align-items: stretch;
   opacity: var(--o, 1);
+}
+.app-widget-bar {
+  width: 3px;
+  flex-shrink: 0;
+  border-radius: 1.5px;
+  background: var(--w-bar);
+  align-self: stretch;
+}
+.app-widget-body {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+.app-widget-text {
+  font-size: 14px;
+  line-height: 1.25;
+  letter-spacing: -0.01em;
+  color: var(--w-ink);
+}
+.app-widget-time {
+  font-size: 11px;
+  color: var(--w-muted);
+}
+@media (prefers-color-scheme: dark) {
+  .app-widget {
+    --w-paper: #17130f;
+    --w-ink:   #e8e1d8;
+    --w-muted: #8a7b6b;
+    --w-bar:   #b09070;
+    box-shadow: rgba(0, 0, 0, 0.45) 0 22px 50px;
+  }
 }
 
 /* ─ hero screenshot ──────────────────────────────────────── */
