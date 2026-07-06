@@ -66,15 +66,29 @@
     <section class="mechanic">
       <h2 class="visually-hidden">How Pensieve works</h2>
       <div class="wrap">
-        <div class="mechanic-step" data-reveal style="--d:0ms">
+        <div class="mechanic-step mechanic-step--with-screen" data-reveal style="--d:0ms">
           <span class="step-num">01</span>
           <h3>Write</h3>
           <p>Type what you're carrying. No title, no tag, no category.</p>
+          <div class="phone-frame phone-frame--small">
+            <picture>
+              <source srcset="screenshots/write-dark.png" media="(prefers-color-scheme: dark)">
+              <img src="screenshots/write-light.png" class="device-shot" width="800" height="1739"
+                   alt="The Pensieve capture bar with a thought being written">
+            </picture>
+          </div>
         </div>
-        <div class="mechanic-step" data-reveal style="--d:90ms">
+        <div class="mechanic-step mechanic-step--with-screen" data-reveal style="--d:90ms">
           <span class="step-num">02</span>
           <h3>Fade</h3>
           <p>Your note fades as the hours pass. By default, it's gone in 72.</p>
+          <div class="phone-frame phone-frame--small">
+            <picture>
+              <source srcset="screenshots/notes-dark.png" media="(prefers-color-scheme: dark)">
+              <img src="screenshots/notes-light.png" class="device-shot" width="800" height="1739"
+                   alt="The Pensieve notes list, with older notes fading toward transparency">
+            </picture>
+          </div>
         </div>
         <div class="mechanic-step mechanic-step--with-screen" data-reveal style="--d:180ms">
           <span class="step-num">03</span>
@@ -239,4 +253,3 @@
   </script>
 </body>
 </html>
-<!-- deploy 20260706T153720Z -->
