@@ -192,13 +192,24 @@ picture[data-reveal] { display: inline-block; }
     rgba(0, 0, 0, 0.34) 0 32px 70px;
 }
 .phone-frame picture { display: block; line-height: 0; }
+/* Clip the hero video's corners via a wrapper: iOS Safari ignores
+   border-radius on a <video> element while it is playing. translateZ forces
+   the compositing context so the rounded clip actually applies. */
+.phone-screen {
+  display: block;
+  border-radius: 46px;
+  overflow: hidden;
+  line-height: 0;
+  transform: translateZ(0);
+  -webkit-mask-image: -webkit-radial-gradient(white, black);
+}
 .device-shot {
   display: block;
   width: 100%;
   height: auto;
   aspect-ratio: 800 / 1739;
   object-fit: cover;
-  border-radius: 46px;   /* concentric: outer 54 − padding 8 */
+  border-radius: 46px;   /* concentric: outer 54 − padding 8 (imgs; video clipped by .phone-screen) */
   background: var(--bg);
 }
 /* Theme-swap the two hero videos (a <video> can't do <picture> media). */
