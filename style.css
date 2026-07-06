@@ -182,7 +182,7 @@ picture[data-reveal] { display: inline-block; }
 .phone-frame {
   position: relative;
   width: 264px;
-  padding: 11px;
+  padding: 8px;
   border-radius: 54px;
   flex-shrink: 0;
   background: linear-gradient(145deg, #34343a 0%, #0b0b0d 34%, #0b0b0d 66%, #34343a 100%);
@@ -198,7 +198,7 @@ picture[data-reveal] { display: inline-block; }
   height: auto;
   aspect-ratio: 800 / 1739;
   object-fit: cover;
-  border-radius: 43px;   /* concentric: outer 54 − padding 11 */
+  border-radius: 46px;   /* concentric: outer 54 − padding 8 */
   background: var(--bg);
 }
 /* Theme-swap the two hero videos (a <video> can't do <picture> media). */
@@ -211,12 +211,12 @@ picture[data-reveal] { display: inline-block; }
 
 .phone-frame--small {
   width: 184px;
-  padding: 8px;
+  padding: 6px;
   border-radius: 40px;
   margin-top: 24px;
 }
 .phone-frame--small .device-shot {
-  border-radius: 32px;   /* concentric: outer 40 − padding 8 */
+  border-radius: 34px;   /* concentric: outer 40 − padding 6 */
 }
 
 /* ─ widget card (standalone home-screen widget preview) ──── */
