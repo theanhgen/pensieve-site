@@ -201,6 +201,13 @@ picture[data-reveal] { display: inline-block; }
   border-radius: 43px;   /* concentric: outer 54 − padding 11 */
   background: var(--bg);
 }
+/* Theme-swap the two hero videos (a <video> can't do <picture> media). */
+.device-shot--dark  { display: none; }
+.device-shot--light { display: block; }
+@media (prefers-color-scheme: dark) {
+  .device-shot--dark  { display: block; }
+  .device-shot--light { display: none; }
+}
 
 .phone-frame--small {
   width: 184px;

@@ -54,11 +54,17 @@
     <section class="screenshot-hero">
       <div class="wrap screenshot-hero-wrap">
         <div class="phone-frame" data-reveal>
-          <picture>
-            <source srcset="screenshots/notes-dark.png" media="(prefers-color-scheme: dark)">
-            <img src="screenshots/notes-light.png" class="device-shot" width="800" height="1739"
-                 alt="The Pensieve notes list — older notes fade toward transparency as they near expiry">
-          </picture>
+          <video class="device-shot device-shot--dark" autoplay muted loop playsinline preload="auto"
+                 poster="screenshots/notes-dark.png" width="800" height="1739"
+                 aria-label="The Pensieve notes list, with older notes fading toward transparency over time">
+            <source src="screenshots/hero-dark.mp4" type="video/mp4">
+            <img src="screenshots/notes-dark.png" class="device-shot" alt="The Pensieve notes list, with older notes fading toward transparency">
+          </video>
+          <video class="device-shot device-shot--light" autoplay muted loop playsinline preload="auto"
+                 poster="screenshots/notes-light.png" width="800" height="1739" aria-hidden="true">
+            <source src="screenshots/hero-light.mp4" type="video/mp4">
+            <img src="screenshots/notes-light.png" class="device-shot" alt="">
+          </video>
         </div>
       </div>
     </section>
@@ -227,8 +233,12 @@
       });
     });
 
-    // Scroll reveal — reveal once, respect reduced motion, fail open.
+    // Respect reduced motion: freeze the hero videos on their poster frame.
     const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (reduce) {
+      document.querySelectorAll('video').forEach(v => { v.removeAttribute('autoplay'); v.pause(); });
+    }
+
     const reveals = document.querySelectorAll('[data-reveal]');
     if (reduce || !('IntersectionObserver' in window)) {
       reveals.forEach(el => el.classList.add('is-in'));
