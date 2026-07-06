@@ -53,33 +53,12 @@
     <!-- Hero mockup — fading notes list -->
     <section class="screenshot-hero">
       <div class="wrap screenshot-hero-wrap">
-        <div class="phone-frame" data-reveal role="img" aria-label="The Pensieve notes list, with older notes fading away as they near expiry">
-          <div class="phone-island"></div>
-          <div class="mock-screen mock--notes">
-            <div class="mock-statusbar">
-              <span class="mock-statusbar-time">9:41</span>
-              <span class="mock-statusbar-icons"><span class="mock-battery"></span></span>
-            </div>
-            <div class="mock-daylabel">Today</div>
-            <div class="mock-note" style="--o:1">
-              <p>Ask Dad about the boiler warranty</p>
-              <span class="mock-note-meta">fades in 68h</span>
-            </div>
-            <div class="mock-note" style="--o:0.72">
-              <p>That line for the toast — "barely audible voices"</p>
-              <span class="mock-note-meta">fades in 41h</span>
-            </div>
-            <div class="mock-note" style="--o:0.5">
-              <p>Book the dentist</p>
-              <span class="mock-note-meta">fades in 18h</span>
-            </div>
-            <div class="mock-note" style="--o:0.32">
-              <p>Breathe. It's fine.</p>
-              <span class="mock-note-meta">fades in 3h</span>
-            </div>
-            <div class="mock-capturebar">Write a thought…</div>
-            <div class="mock-home-indicator"></div>
-          </div>
+        <div class="phone-frame" data-reveal>
+          <picture>
+            <source srcset="screenshots/notes-dark.png" media="(prefers-color-scheme: dark)">
+            <img src="screenshots/notes-light.png" class="device-shot" width="800" height="1739"
+                 alt="The Pensieve notes list — older notes fade toward transparency as they near expiry">
+          </picture>
         </div>
       </div>
     </section>
@@ -101,13 +80,12 @@
           <span class="step-num">03</span>
           <h3>Release</h3>
           <p>Gone. No archive. Nothing to scroll back to.</p>
-          <div class="phone-frame phone-frame--small" role="img" aria-label="The Pensieve empty state after a note is released">
-            <div class="phone-island"></div>
-            <div class="mock-screen mock--empty">
-              <div class="mock-empty-mark"></div>
-              <p class="mock-empty-text">Nothing to hold onto right now.</p>
-              <div class="mock-home-indicator"></div>
-            </div>
+          <div class="phone-frame phone-frame--small">
+            <picture>
+              <source srcset="screenshots/empty-dark.png" media="(prefers-color-scheme: dark)">
+              <img src="screenshots/empty-light.png" class="device-shot" width="800" height="1739"
+                   alt="The Pensieve empty state after a note is released, reading “Nothing left to carry.”">
+            </picture>
           </div>
         </div>
       </div>
@@ -140,18 +118,10 @@
       <div class="wrap">
         <h2 data-reveal>See what's fading.</h2>
         <p data-reveal style="--d:80ms">Widgets show what's slipping away — without opening the app.</p>
-        <div class="phone-frame phone-frame--small" data-reveal style="--d:160ms" role="img" aria-label="A Pensieve widget on the lock screen showing notes that are fading">
-          <div class="phone-island"></div>
-          <div class="mock-screen mock--lock">
-            <span class="mock-date">Sunday, 5 July</span>
-            <div class="mock-clock">9:41</div>
-            <div class="mock-widget">
-              <span class="mock-widget-title">Fading</span>
-              <span class="mock-widget-line" style="--o:0.85">Book the dentist</span>
-              <span class="mock-widget-line" style="--o:0.55">Breathe. It's fine.</span>
-            </div>
-            <div class="mock-home-indicator"></div>
-          </div>
+        <div class="widget-card" data-reveal style="--d:160ms" role="img" aria-label="A Pensieve home-screen widget titled Fading, listing two notes that are fading out">
+          <span class="widget-card-title">Fading</span>
+          <span class="widget-card-line" style="--o:0.9">Book the dentist</span>
+          <span class="widget-card-line" style="--o:0.5">Breathe. It's fine.</span>
         </div>
       </div>
     </section>
