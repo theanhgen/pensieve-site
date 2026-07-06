@@ -412,9 +412,11 @@ picture[data-reveal] { display: inline-block; }
   letter-spacing: -0.03em;
   color: var(--ink);
   margin-bottom: 48px;
+  text-align: center;
 }
 .faq-list {
   max-width: 640px;
+  margin: 0 auto;
 }
 .faq-item {
   border-top: 1px solid var(--rule);
