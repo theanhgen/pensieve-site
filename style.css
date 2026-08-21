@@ -6,7 +6,7 @@
   --rule:       #2d2d2d;
   --accent:     #b09070;
   --nav-bg:     rgba(0, 0, 0, 0.72);
-  --icon-shadow:rgba(0, 0, 0, 0.6) 0 8px 40px;
+  --icon-shadow:rgba(0, 0, 0, 0.50) 0 4px 12px, rgba(0, 0, 0, 0.42) 0 16px 48px;
 
   --font: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", system-ui, sans-serif;
 
@@ -35,6 +35,13 @@ a { text-decoration: none; color: inherit; }
 /* Typographic defaults — balance headings, keep body from orphaning. */
 h1, h2, h3 { text-wrap: balance; }
 p { text-wrap: pretty; }
+
+/* Selection in the brand accent — the browser default is a hard blue that
+   belongs to no palette on this page. */
+::selection {
+  background: color-mix(in oklab, var(--accent) 28%, transparent);
+  color: var(--ink);
+}
 
 /* Consistent, branded focus ring across every interactive element. */
 :focus-visible {
@@ -68,8 +75,8 @@ html.js [data-reveal] {
   opacity: 0;
   transform: translateY(16px);
   transition:
-    opacity   0.6s var(--ease-out) var(--d, 0ms),
-    transform 0.6s var(--ease-out) var(--d, 0ms);
+    opacity   0.42s var(--ease-out) var(--d, 0ms),
+    transform 0.42s var(--ease-out) var(--d, 0ms);
 }
 html.js [data-reveal].is-in {
   opacity: 1;
@@ -108,53 +115,56 @@ picture[data-reveal] { display: inline-block; }
 }
 
 /* ─ hero ─────────────────────────────────────────────────── */
+/* Two columns: the offer, and the app performing it. The device used to be its
+   own section below; showing it beside the headline is the point — the product
+   IS the fade, so the page should not have to assert it in prose first. */
 .hero {
-  padding: 96px 24px 80px;
-  text-align: center;
+  padding: 88px 24px 80px;
 }
-.hero-inner {
-  max-width: 640px;
-  margin: 0 auto;
+.hero-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 64px;
+  align-items: center;
+}
+.hero-copy {
   display: flex;
   flex-direction: column;
-  align-items: center;
+  align-items: flex-start;
   gap: 16px;
 }
+.hero-device {
+  display: flex;
+  justify-content: center;
+}
 .app-icon-img {
-  width: 112px;
-  height: 112px;
-  border-radius: var(--r-icon);
+  width: 72px;
+  height: 72px;
+  border-radius: 17px;   /* concentric with the 112px icon's 26px */
   box-shadow: var(--icon-shadow);
-  margin-bottom: 8px;
   display: block;
 }
 .hero-title {
-  font-size: 80px;
+  font-size: 68px;
   font-weight: 700;
-  line-height: 1.0;
+  line-height: 0.98;
   letter-spacing: -0.04em;
   color: var(--ink);
 }
-.hero-tagline {
-  font-size: 28px;
-  font-weight: 300;
-  line-height: 1.2;
-  letter-spacing: -0.01em;
-  color: var(--ink);
-}
 .hero-sub {
-  font-size: 17px;
-  font-weight: 400;
-  line-height: 1.5;
+  font-size: 19px;
+  font-weight: 300;
+  line-height: 1.4;
+  letter-spacing: -0.01em;
   color: var(--muted);
-  max-width: 400px;
+  max-width: 380px;
 }
 /* Honest pre-launch CTA — the badge is not a link yet. */
 .hero-cta {
-  margin-top: 12px;
+  margin-top: 4px;
   display: flex;
   flex-direction: column;
-  align-items: center;
+  align-items: flex-start;
   gap: 10px;
 }
 .appstore-badge {
@@ -172,6 +182,13 @@ picture[data-reveal] { display: inline-block; }
   letter-spacing: 0.02em;
   color: var(--accent);
   text-transform: uppercase;
+}
+.hero-trust {
+  font-size: 13px;
+  font-weight: 400;
+  line-height: 1.5;
+  letter-spacing: -0.01em;
+  color: var(--muted);
 }
 
 /* ─ phone frame ─────────────────────────────────────────── */
@@ -233,13 +250,21 @@ picture[data-reveal] { display: inline-block; }
 /* ─ Fading home-screen widget (matches the real app widget) ─ */
 /* Colors, 3px accent bar, section header, and per-note fade opacity all
    mirror PensieveWidget's FadingWidgetView (PensievePaper/Ink/Muted/Release). */
+/* Three widgets side by side; they stack under 900px with the hero. */
+.app-widget-row {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 20px;
+  width: 100%;
+  align-items: start;
+}
+
 .app-widget {
   --w-paper: #f6f3ed;
   --w-ink:   #221a12;
   --w-muted: #7e6c5b;
   --w-bar:   #744f34;
-  width: 340px;
-  max-width: 100%;
+  width: 100%;
   margin-top: 8px;
   background: var(--w-paper);
   border-radius: 28px;
@@ -287,6 +312,27 @@ picture[data-reveal] { display: inline-block; }
   font-size: 11px;
   color: var(--w-muted);
 }
+/* Pinned notes draw their bar in PensieveAmber rather than PensieveRelease —
+   same distinction the widget makes, so "held" reads differently at a glance. */
+.app-widget--held { --w-bar: #a0522d; }
+
+/* CaptureRow: hairline, basin glyph, one label. */
+.app-widget-capture {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  margin-top: 2px;
+  padding-top: 9px;
+  border-top: 0.5px solid rgba(126, 108, 91, 0.28);
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--w-muted);
+}
+.app-widget-basin {
+  color: var(--w-bar);
+  flex-shrink: 0;
+}
+
 @media (prefers-color-scheme: dark) {
   .app-widget {
     --w-paper: #17130f;
@@ -295,15 +341,8 @@ picture[data-reveal] { display: inline-block; }
     --w-bar:   #b09070;
     box-shadow: rgba(0, 0, 0, 0.45) 0 22px 50px;
   }
-}
-
-/* ─ hero screenshot ──────────────────────────────────────── */
-.screenshot-hero {
-  padding: 0 24px 80px;
-}
-.screenshot-hero-wrap {
-  display: flex;
-  justify-content: center;
+  .app-widget--held { --w-bar: #d49567; }
+  .app-widget-capture { border-top-color: rgba(138, 123, 107, 0.3); }
 }
 
 /* ─ mechanic ─────────────────────────────────────────────── */
@@ -426,6 +465,21 @@ picture[data-reveal] { display: inline-block; }
   padding: 80px 24px;
   border-top: 1px solid var(--rule);
   text-align: center;
+  position: relative;
+}
+/* One accent hairline, on the one section that carries the promise. Sits over
+   the grey rule rather than replacing it, so the section still aligns with
+   every other divider on the page. */
+.privacy::before {
+  content: '';
+  position: absolute;
+  top: -1px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 72px;
+  height: 2px;
+  background: var(--accent);
+  border-radius: 1px;
 }
 .privacy p {
   font-size: 28px;
@@ -499,7 +553,7 @@ picture[data-reveal] { display: inline-block; }
   width: 16px;
   height: 16px;
   flex-shrink: 0;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M8 3v10M3 8h10' stroke='%2386868b' stroke-width='1.5' stroke-linecap='round'/%3E%3C/svg%3E");
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M8 3v10M3 8h10' stroke='%23b09070' stroke-width='1.5' stroke-linecap='round'/%3E%3C/svg%3E");
   background-size: contain;
   background-repeat: no-repeat;
   transition: transform 0.24s var(--ease-out);
@@ -574,15 +628,56 @@ html.js .faq-answer.is-open {
 @media (hover: hover) and (pointer: fine) {
   .nav-link:hover     { opacity: 0.7; }
   .privacy-link:hover { opacity: 0.7; }
+  .privacy-link:hover,
+  .nav-link:hover    { text-decoration: underline; text-underline-offset: 4px; }
   .faq-question:hover { opacity: 0.7; }
   .footer-link:hover  { color: var(--ink); }
 }
 
+/* ─ press ────────────────────────────────────────────────── */
+/* Touch has no hover, so without this a tap has no acknowledgement at all.
+   Opacity rather than a scale transform: these are text links and a
+   full-width accordion row, and scaling either one looks like a glitch. */
+.nav-link:active,
+.privacy-link:active,
+.footer-link:active,
+.faq-question:active {
+  opacity: 0.55;
+  transition-duration: 60ms;
+}
+
+/* ─ hit targets ──────────────────────────────────────────── */
+/* The nav and footer links are 13-14px text with no padding, so their real
+   hit area was the line box — well under the 44px a thumb needs. Expand it
+   with a pseudo-element so nothing moves visually. */
+.nav-link,
+.footer-link {
+  position: relative;
+}
+.nav-link::after,
+.footer-link::after {
+  content: '';
+  position: absolute;
+  inset: -14px -10px;
+}
+
 /* ─ responsive ───────────────────────────────────────────── */
+/* One column below 900px: at two columns the copy well gets too narrow for a
+   68px headline long before the 833px breakpoint the card grids use. */
+@media (max-width: 900px) {
+  .hero-grid {
+    grid-template-columns: 1fr;
+    gap: 40px;
+  }
+  .hero-copy { align-items: center; text-align: center; }
+  .app-widget-row { grid-template-columns: 1fr; max-width: 340px; margin: 0 auto; }
+  .hero-cta  { align-items: center; }
+  .hero-sub  { max-width: 420px; }
+}
+
 @media (max-width: 640px) {
   /* Let .wrap own the horizontal gutter; sections drop side padding. */
   .hero,
-  .screenshot-hero,
   .mechanic,
   .features,
   .widgets,
@@ -590,8 +685,8 @@ html.js .faq-answer.is-open {
   .faq { padding-left: 0; padding-right: 0; }
   .nav .wrap { padding: 0 20px; }
 
-  .hero-title  { font-size: 52px; }
-  .hero-tagline { font-size: 21px; }
+  .hero-title { font-size: 46px; }
+  .hero-sub   { font-size: 17px; }
   .privacy p { font-size: 23px; }
 
   .mechanic .wrap,
@@ -619,7 +714,7 @@ html.js .faq-answer.is-open {
 }
 
 @media (max-width: 833px) and (min-width: 641px) {
-  .hero-title { font-size: 64px; }
+  .hero-title { font-size: 56px; }
 
   .mechanic .wrap,
   .features-grid { grid-template-columns: 1fr; }
@@ -657,7 +752,7 @@ html.js .faq-answer.is-open {
     --rule:        #d2d2d7;
     --accent:      #744f34;
     --nav-bg:      rgba(255, 255, 255, 0.82);
-    --icon-shadow: rgba(0, 0, 0, 0.12) 0 8px 40px;
+    --icon-shadow: rgba(41, 32, 24, 0.10) 0 4px 12px, rgba(41, 32, 24, 0.10) 0 16px 48px;
   }
 
   .phone-frame {

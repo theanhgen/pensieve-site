@@ -34,38 +34,44 @@
   </nav>
 
   <main>
+    <!-- Hero — two columns: the offer on the left, the app actually doing it on
+         the right. The device used to sit in its own section below the fold's
+         first screen, which meant the page asserted "it fades" long before it
+         showed it. -->
     <section class="hero">
-      <div class="hero-inner">
-        <picture data-reveal style="--d:0ms">
-          <source srcset="icon-dark.png" media="(prefers-color-scheme: dark)">
-          <img src="icon.png" alt="pensieve app icon" class="app-icon-img" width="112" height="112">
-        </picture>
-        <h1 class="hero-title" data-reveal style="--d:60ms">pensieve</h1>
-        <p class="hero-tagline" data-reveal style="--d:120ms">for what you carry.</p>
-        <p class="hero-sub" data-reveal style="--d:180ms">write it down. it fades on its own, and in a week it's gone.</p>
-        <div class="hero-cta" data-reveal style="--d:240ms">
-          <img src="appstore-badge.svg" alt="Download on the App Store" class="appstore-badge" width="146" height="48">
-          <span class="hero-cta-note">coming soon</span>
+      <div class="wrap hero-grid">
+        <div class="hero-copy">
+          <picture data-reveal style="--d:0ms">
+            <source srcset="icon-dark.png" media="(prefers-color-scheme: dark)">
+            <img src="icon.png" alt="pensieve app icon" class="app-icon-img" width="112" height="112">
+          </picture>
+          <h1 class="hero-title" data-reveal style="--d:40ms">a week,<br>then gone.</h1>
+          <p class="hero-sub" data-reveal style="--d:80ms">notes that fade on their own, so you never have to tidy up after yourself.</p>
+          <div class="hero-cta" data-reveal style="--d:120ms">
+            <img src="appstore-badge.svg" alt="Download on the App Store" class="appstore-badge" width="146" height="48">
+            <span class="hero-cta-note">coming soon</span>
+          </div>
+          <!-- The three objections a visitor has before they read anything else.
+               Every one is verifiable: free app, no sign-up, no analytics SDK
+               (see PrivacyInfo.xcprivacy — NSPrivacyCollectedDataTypes is empty). -->
+          <p class="hero-trust" data-reveal style="--d:160ms">free · no account · no analytics</p>
         </div>
-      </div>
-    </section>
 
-    <!-- Hero mockup — fading notes list -->
-    <section class="screenshot-hero">
-      <div class="wrap screenshot-hero-wrap">
-        <div class="phone-frame" data-reveal>
-          <div class="phone-screen">
-            <video class="device-shot device-shot--dark" autoplay muted loop playsinline preload="auto"
-                   poster="screenshots/poster-dark.png" width="800" height="1739"
-                   aria-label="The pensieve notes list, with older notes fading toward transparency over time">
-              <source src="screenshots/hero-dark.mp4" type="video/mp4">
-              <img src="screenshots/poster-dark.png" class="device-shot" alt="The pensieve notes list, with older notes fading toward transparency">
-            </video>
-            <video class="device-shot device-shot--light" autoplay muted loop playsinline preload="auto"
-                   poster="screenshots/poster-light.png" width="800" height="1739" aria-hidden="true">
-              <source src="screenshots/hero-light.mp4" type="video/mp4">
-              <img src="screenshots/poster-light.png" class="device-shot" alt="">
-            </video>
+        <div class="hero-device" data-reveal style="--d:80ms">
+          <div class="phone-frame">
+            <div class="phone-screen">
+              <video class="device-shot device-shot--dark" autoplay muted loop playsinline preload="auto"
+                     poster="screenshots/poster-dark.png" width="800" height="1739"
+                     aria-label="The pensieve notes list, with older notes fading toward transparency over time">
+                <source src="screenshots/hero-dark.mp4" type="video/mp4">
+                <img src="screenshots/poster-dark.png" class="device-shot" alt="The pensieve notes list, with older notes fading toward transparency">
+              </video>
+              <video class="device-shot device-shot--light" autoplay muted loop playsinline preload="auto"
+                     poster="screenshots/poster-light.png" width="800" height="1739" aria-hidden="true">
+                <source src="screenshots/hero-light.mp4" type="video/mp4">
+                <img src="screenshots/poster-light.png" class="device-shot" alt="">
+              </video>
+            </div>
           </div>
         </div>
       </div>
@@ -98,7 +104,7 @@
             </picture>
           </div>
         </div>
-        <div class="mechanic-step mechanic-step--with-screen" data-reveal style="--d:180ms">
+        <div class="mechanic-step mechanic-step--with-screen" data-reveal style="--d:120ms">
           <span class="step-num">03</span>
           <h3>release</h3>
           <p>gone. no archive. nothing to scroll back to.</p>
@@ -128,7 +134,7 @@
             <h3>no archive,<br>no search.</h3>
             <p>nothing to scroll back through. the past doesn't follow you here.</p>
           </div>
-          <div class="feature-card" data-reveal style="--d:180ms">
+          <div class="feature-card" data-reveal style="--d:120ms">
             <h3>no account,<br>no tracking.</h3>
             <p>no sign-up, no ads, no analytics. your notes never touch a server of ours. we don't have any.</p>
           </div>
@@ -140,28 +146,89 @@
       <div class="wrap">
         <h2 data-reveal>see what's fading.</h2>
         <p data-reveal style="--d:80ms">put it on your home screen, your Lock Screen, or in Control Center. glance instead of opening the app.</p>
-        <div class="app-widget" data-reveal style="--d:160ms" role="img" aria-label="The pensieve Fading home-screen widget, listing notes that are about to fade out">
-          <span class="app-widget-label">Fading</span>
-          <div class="app-widget-note" style="--o:0.4">
-            <span class="app-widget-bar"></span>
-            <div class="app-widget-body">
-              <p class="app-widget-text">Breathe. It's fine.</p>
-              <span class="app-widget-time">2 days ago</span>
+        <!-- Three of the five widgets the app ships. Colours, the 3px bar and the
+             per-note fade opacity mirror PensieveWidget: PensieveRelease for
+             fading notes, PensieveAmber for pinned ones, PensieveMuted labels. -->
+        <div class="app-widget-row">
+
+          <div class="app-widget" data-reveal style="--d:160ms" role="img" aria-label="The pensieve Fading home-screen widget, listing notes that are about to fade out">
+            <span class="app-widget-label">fading</span>
+            <div class="app-widget-note" style="--o:0.4">
+              <span class="app-widget-bar"></span>
+              <div class="app-widget-body">
+                <p class="app-widget-text">Breathe. It's fine.</p>
+                <span class="app-widget-time">2 days ago</span>
+              </div>
+            </div>
+            <div class="app-widget-note" style="--o:0.66">
+              <span class="app-widget-bar"></span>
+              <div class="app-widget-body">
+                <p class="app-widget-text">Book the dentist</p>
+                <span class="app-widget-time">2 days ago</span>
+              </div>
+            </div>
+            <div class="app-widget-note" style="--o:0.92">
+              <span class="app-widget-bar"></span>
+              <div class="app-widget-body">
+                <p class="app-widget-text">Pick up the dry cleaning Thursday</p>
+                <span class="app-widget-time">1 day ago</span>
+              </div>
             </div>
           </div>
-          <div class="app-widget-note" style="--o:0.66">
-            <span class="app-widget-bar"></span>
-            <div class="app-widget-body">
-              <p class="app-widget-text">Book the dentist</p>
-              <span class="app-widget-time">2 days ago</span>
+
+          <div class="app-widget app-widget--held" data-reveal style="--d:200ms" role="img" aria-label="The pensieve Held home-screen widget, listing notes you have pinned so they do not fade">
+            <span class="app-widget-label">held</span>
+            <div class="app-widget-note">
+              <span class="app-widget-bar"></span>
+              <div class="app-widget-body">
+                <p class="app-widget-text">Wifi: heronsgate, 4 words no caps</p>
+                <span class="app-widget-time">pinned</span>
+              </div>
+            </div>
+            <div class="app-widget-note">
+              <span class="app-widget-bar"></span>
+              <div class="app-widget-body">
+                <p class="app-widget-text">Mum's new address, flat 4</p>
+                <span class="app-widget-time">pinned</span>
+              </div>
+            </div>
+            <div class="app-widget-note">
+              <span class="app-widget-bar"></span>
+              <div class="app-widget-body">
+                <p class="app-widget-text">Meter reading 41982</p>
+                <span class="app-widget-time">pinned</span>
+              </div>
             </div>
           </div>
-          <div class="app-widget-note" style="--o:0.92">
-            <span class="app-widget-bar"></span>
-            <div class="app-widget-body">
-              <p class="app-widget-text">Pick up the dry cleaning Thursday</p>
-              <span class="app-widget-time">1 day ago</span>
+
+          <div class="app-widget" data-reveal style="--d:240ms" role="img" aria-label="The pensieve Recent home-screen widget, listing the freshest notes above a shortcut that opens a new note">
+            <span class="app-widget-label">recent</span>
+            <div class="app-widget-note" style="--o:1">
+              <span class="app-widget-bar"></span>
+              <div class="app-widget-body">
+                <p class="app-widget-text">Flat white, oat, no sugar</p>
+                <span class="app-widget-time">just now</span>
+              </div>
             </div>
+            <div class="app-widget-note" style="--o:0.88">
+              <span class="app-widget-bar"></span>
+              <div class="app-widget-body">
+                <p class="app-widget-text">Call mum back</p>
+                <span class="app-widget-time">yesterday</span>
+              </div>
+            </div>
+            <!-- CaptureRow in the widget: a hairline, the basin glyph, one label. -->
+            <div class="app-widget-capture">
+              <svg class="app-widget-basin" viewBox="0 0 26 26" width="17" height="17" aria-hidden="true">
+                <circle cx="13" cy="13" r="12.3" fill="none" stroke="currentColor" stroke-width="1.4"></circle>
+                <circle cx="13" cy="13" r="7.5" fill="none" stroke="currentColor" stroke-width="0.9" opacity="0.5"></circle>
+                <circle cx="13" cy="13" r="1.5" fill="currentColor"></circle>
+              </svg>
+              <span>release a thought</span>
+            </div>
+          </div>
+
+        </div>
           </div>
         </div>
       </div>
@@ -202,7 +269,7 @@
               <p>no. a note stays what you wrote when you wrote it. you can copy it, extend it, pin it, or delete it.</p>
             </div></div>
           </div>
-          <div class="faq-item" data-reveal style="--d:120ms">
+          <div class="faq-item" data-reveal style="--d:80ms">
             <h3 class="faq-heading">
               <button class="faq-question" aria-expanded="false" aria-controls="faq-a3">does pensieve sync across my devices?</button>
             </h3>
@@ -226,7 +293,7 @@
               <p>iPhone only for now.</p>
             </div></div>
           </div>
-          <div class="faq-item" data-reveal style="--d:240ms">
+          <div class="faq-item" data-reveal style="--d:160ms">
             <h3 class="faq-heading">
               <button class="faq-question" aria-expanded="false" aria-controls="faq-a5">is there a subscription or cost?</button>
             </h3>
