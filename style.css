@@ -191,42 +191,53 @@ picture[data-reveal] { display: inline-block; }
   color: var(--muted);
 }
 
-/* ─ phone frame ─────────────────────────────────────────── */
 /* ─ device frame ─────────────────────────────────────────── */
-/* The frame is the phone body: a dark titanium bezel (via padding) with
-   the real screenshot inset inside it. Bezel stays dark in both themes,
-   like a real phone; the screenshot within is theme-aware. */
+/* Apple's official iPhone 17 Pro Max bezel (Design Resources, 3x PNG) laid
+   OVER the screen, rather than a CSS gradient pretending to be a phone.
+   Measured from the asset's alpha channel, not guessed: the image is
+   1470x3000 and its transparent screen cutout is 1318x2866 at x=76, y=67 —
+   aspect 0.4599 against the 0.4603 of the 800/1739 recordings, i.e. the same
+   rectangle to within anti-aliasing. Insets are therefore expressed as
+   percentages so all four frames scale from one file.
+
+   The Dynamic Island is painted into the PNG and sits above the video, which
+   is what a real device looks like. The screen needs no border-radius: at the
+   corners the bezel itself is opaque and masks the video's square edges. */
 .phone-frame {
   position: relative;
   width: 264px;
-  padding: 8px;
-  border-radius: 54px;
+  aspect-ratio: 1470 / 3000;
   flex-shrink: 0;
-  background: linear-gradient(145deg, #34343a 0%, #0b0b0d 34%, #0b0b0d 66%, #34343a 100%);
-  box-shadow:
-    inset 0 0 0 1.5px rgba(255, 255, 255, 0.10),
-    rgba(0, 0, 0, 0.20) 0 6px 16px,
-    rgba(0, 0, 0, 0.34) 0 32px 70px;
+  /* drop-shadow, not box-shadow: it follows the PNG's alpha silhouette
+     instead of casting from a rectangle the device does not fill. */
+  filter:
+    drop-shadow(rgba(0, 0, 0, 0.20) 0 6px 16px)
+    drop-shadow(rgba(0, 0, 0, 0.34) 0 24px 50px);
 }
-.phone-frame picture { display: block; line-height: 0; }
-/* Clip the hero video's corners via a wrapper: iOS Safari ignores
-   border-radius on a <video> element while it is playing. translateZ forces
-   the compositing context so the rounded clip actually applies. */
 .phone-screen {
-  display: block;
-  border-radius: 46px;
+  position: absolute;
+  left:   5.1701%;
+  top:    2.2333%;
+  width:  89.6599%;
+  height: 95.5333%;
   overflow: hidden;
   line-height: 0;
   transform: translateZ(0);
   -webkit-mask-image: -webkit-radial-gradient(white, black);
 }
+.phone-bezel {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+  pointer-events: none;
+}
 .device-shot {
   display: block;
   width: 100%;
-  height: auto;
-  aspect-ratio: 800 / 1739;
+  height: 100%;
   object-fit: cover;
-  border-radius: 46px;   /* concentric: outer 54 − padding 8 (imgs; video clipped by .phone-screen) */
   background: var(--bg);
 }
 /* Theme-swap the two hero videos (a <video> can't do <picture> media). */
@@ -239,12 +250,7 @@ picture[data-reveal] { display: inline-block; }
 
 .phone-frame--small {
   width: 184px;
-  padding: 6px;
-  border-radius: 40px;
   margin-top: 24px;
-}
-.phone-frame--small .device-shot {
-  border-radius: 34px;   /* concentric: outer 40 − padding 6 */
 }
 
 /* ─ Fading home-screen widget (matches the real app widget) ─ */
