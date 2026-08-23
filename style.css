@@ -222,6 +222,11 @@ picture[data-reveal] { display: inline-block; }
   height: 95.5333%;
   overflow: hidden;
   line-height: 0;
+  /* The cutout is a ROUNDED rect, not the plain box its bounding measurement
+     suggests. Without this the screenshot's square corners poke out past the
+     bezel as four pale notches — invisible on dark content, obvious on light.
+     186px at 3x (62pt, Apple's screen radius) scaled to each frame width. */
+  border-radius: 33px;
   transform: translateZ(0);
   -webkit-mask-image: -webkit-radial-gradient(white, black);
 }
@@ -252,6 +257,7 @@ picture[data-reveal] { display: inline-block; }
   width: 184px;
   margin-top: 24px;
 }
+.phone-frame--small .phone-screen { border-radius: 23px; }
 
 /* ─ Fading home-screen widget (matches the real app widget) ─ */
 /* Colors, 3px accent bar, section header, and per-note fade opacity all
