@@ -347,8 +347,10 @@ picture[data-reveal] { display: inline-block; }
   font-weight: 500;
   color: var(--w-muted);
 }
-.app-widget-basin {
-  color: var(--w-bar);
+/* ReleaseGlyph is bubble.left.circle.fill in PensieveMuted — the same muted
+   tone as the label beside it, not the accent bar colour. */
+.app-widget-glyph {
+  color: var(--w-muted);
   flex-shrink: 0;
 }
 
