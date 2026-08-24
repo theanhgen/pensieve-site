@@ -227,8 +227,12 @@ picture[data-reveal] { display: inline-block; }
      bezel as four pale notches — invisible on dark content, obvious on light.
      186px at 3x (62pt, Apple's screen radius) scaled to each frame width. */
   border-radius: 33px;
+  /* Safari will not clip a PLAYING <video> to a rounded container: overflow
+     plus border-radius is ignored on the composited video layer, so the frame
+     showed a white rectangle with square corners around the device. clip-path
+     is honoured on that layer where the old -webkit-mask hack no longer is. */
+  clip-path: inset(0 round 33px);
   transform: translateZ(0);
-  -webkit-mask-image: -webkit-radial-gradient(white, black);
 }
 .phone-bezel {
   position: absolute;
@@ -243,7 +247,7 @@ picture[data-reveal] { display: inline-block; }
   width: 100%;
   height: 100%;
   object-fit: cover;
-  background: var(--bg);
+  border-radius: inherit;
 }
 /* Theme-swap the two hero videos (a <video> can't do <picture> media). */
 .device-shot--dark  { display: none; }
@@ -257,7 +261,10 @@ picture[data-reveal] { display: inline-block; }
   width: 184px;
   margin-top: 24px;
 }
-.phone-frame--small .phone-screen { border-radius: 23px; }
+.phone-frame--small .phone-screen {
+  border-radius: 23px;
+  clip-path: inset(0 round 23px);
+}
 
 /* ─ Fading home-screen widget (matches the real app widget) ─ */
 /* Colors, 3px accent bar, section header, and per-note fade opacity all
