@@ -11,12 +11,9 @@
   --font: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", system-ui, sans-serif;
 
   --r-card: 18px;
-  --r-pill: 9999px;
-  --r-icon: 26px;
 
-  /* Strong custom easings — the built-in CSS curves are too weak. */
-  --ease-out:    cubic-bezier(0.23, 1, 0.32, 1);
-  --ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);
+  /* Strong custom easing — the built-in CSS curves are too weak. */
+  --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
 
   color-scheme: light dark;
 }
@@ -29,6 +26,7 @@ body {
   color: var(--ink);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  overflow-wrap: break-word;
 }
 a { text-decoration: none; color: inherit; }
 
@@ -50,6 +48,25 @@ p { text-wrap: pretty; }
   border-radius: 4px;
 }
 
+/* Skip link — the first focusable element, ahead of the sticky nav. Parked
+   off-screen with a transform rather than display:none so it stays in the tab
+   order, and slides in when it takes focus. */
+.skip-link {
+  position: absolute;
+  top: 0.5rem;
+  left: 0.5rem;
+  z-index: 200;
+  padding: 0.625rem 1rem;
+  border-radius: 10px;
+  background: var(--bg-card);
+  color: var(--ink);
+  font-size: 0.875rem;
+  font-weight: 500;
+  transform: translateY(-250%);
+  transition: transform 0.18s var(--ease-out);
+}
+.skip-link:focus { transform: none; }
+
 .visually-hidden {
   position: absolute;
   width: 1px; height: 1px;
@@ -60,13 +77,13 @@ p { text-wrap: pretty; }
   border: 0;
 }
 
-section { scroll-margin-top: 64px; }
+section { scroll-margin-top: 4rem; }
 
 /* ─ wrap ─────────────────────────────────────────────────── */
 .wrap {
   max-width: 980px;
   margin: 0 auto;
-  padding: 0 24px;
+  padding: 0 1.5rem;
 }
 
 /* ─ scroll reveal ────────────────────────────────────────── */
@@ -91,24 +108,24 @@ picture[data-reveal] { display: inline-block; }
   top: 0;
   z-index: 100;
   background: var(--nav-bg);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
   border-bottom: 1px solid var(--rule);
 }
 .nav .wrap {
-  height: 52px;
+  min-height: 3.25rem;
   display: flex;
   align-items: center;
   justify-content: space-between;
 }
 .nav-wordmark {
-  font-size: 17px;
+  font-size: 1.0625rem;
   font-weight: 600;
   letter-spacing: -0.022em;
   color: var(--ink);
 }
 .nav-link {
-  font-size: 14px;
+  font-size: 0.875rem;
   font-weight: 400;
   color: var(--accent);
   transition: opacity 0.15s var(--ease-out);
@@ -119,19 +136,19 @@ picture[data-reveal] { display: inline-block; }
    own section below; showing it beside the headline is the point — the product
    IS the fade, so the page should not have to assert it in prose first. */
 .hero {
-  padding: 88px 24px 80px;
+  padding: 5.5rem 1.5rem 5rem;
 }
 .hero-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 64px;
+  gap: 4rem;
   align-items: center;
 }
 .hero-copy {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  gap: 16px;
+  gap: 1rem;
 }
 .hero-device {
   display: flex;
@@ -142,30 +159,34 @@ picture[data-reveal] { display: inline-block; }
   height: 72px;
   border-radius: 17px;   /* concentric with the 112px icon's 26px */
   box-shadow: var(--icon-shadow);
+  /* 1px hairline inset by -1px, so the icon keeps an edge on either ground
+     instead of bleeding into the page where its artwork meets it. */
+  outline: 1px solid rgba(255, 255, 255, 0.08);
+  outline-offset: -1px;
   display: block;
 }
 .hero-title {
-  font-size: 68px;
+  font-size: 4.25rem;
   font-weight: 700;
   line-height: 0.98;
   letter-spacing: -0.04em;
   color: var(--ink);
 }
 .hero-sub {
-  font-size: 19px;
+  font-size: 1.1875rem;
   font-weight: 300;
   line-height: 1.4;
   letter-spacing: -0.01em;
   color: var(--muted);
-  max-width: 380px;
+  max-width: 23.75rem;
 }
 /* Honest pre-launch CTA — the badge is not a link yet. */
 .hero-cta {
-  margin-top: 4px;
+  margin-top: 0.25rem;
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  gap: 10px;
+  gap: 0.625rem;
 }
 .appstore-badge {
   height: 48px;
@@ -177,14 +198,15 @@ picture[data-reveal] { display: inline-block; }
   .appstore-badge { filter: invert(1); }
 }
 .hero-cta-note {
-  font-size: 13px;
+  font-size: 0.8125rem;
   font-weight: 500;
   letter-spacing: 0.02em;
   color: var(--accent);
   text-transform: uppercase;
+  white-space: nowrap;
 }
 .hero-trust {
-  font-size: 13px;
+  font-size: 0.8125rem;
   font-weight: 400;
   line-height: 1.5;
   letter-spacing: -0.01em;
@@ -208,11 +230,23 @@ picture[data-reveal] { display: inline-block; }
   width: 264px;
   aspect-ratio: 1470 / 3000;
   flex-shrink: 0;
-  /* drop-shadow, not box-shadow: it follows the PNG's alpha silhouette
-     instead of casting from a rectangle the device does not fill. */
+}
+/* drop-shadow, not box-shadow: it follows the PNG's alpha silhouette instead
+   of casting from a rectangle the device does not fill. But NOT on the hero
+   frame itself: Safari silently refuses to render a filter on any ancestor of
+   an accelerated <video>, so the hero's shadow comes from .phone-shadow — a
+   duplicate bezel img UNDER the stack that carries the filter instead. Its
+   subtree is just an image, which Safari rasterizes fine; its own pixels are
+   hidden beneath the video and the real bezel, so only the shadow shows. */
+.phone-shadow {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
   filter:
-    drop-shadow(rgba(0, 0, 0, 0.20) 0 6px 16px)
-    drop-shadow(rgba(0, 0, 0, 0.34) 0 24px 50px);
+    drop-shadow(rgba(41, 32, 24, 0.20) 0 6px 16px)
+    drop-shadow(rgba(41, 32, 24, 0.32) 0 24px 50px);
 }
 .phone-screen {
   position: absolute;
@@ -227,10 +261,15 @@ picture[data-reveal] { display: inline-block; }
      bezel as four pale notches — invisible on dark content, obvious on light.
      186px at 3x (62pt, Apple's screen radius) scaled to each frame width. */
   border-radius: 33px;
-  /* Safari will not clip a PLAYING <video> to a rounded container: overflow
-     plus border-radius is ignored on the composited video layer, so the frame
-     showed a white rectangle with square corners around the device. clip-path
-     is honoured on that layer where the old -webkit-mask hack no longer is. */
+  /* The "Safari white rectangle" was never a compositing artifact: it was the
+     light-mode box-shadow left on .phone-frame when b9b366f swapped the base
+     shadow for filter:drop-shadow. An outer box-shadow is clipped out of its
+     own border box, so around the square, transparent frame it painted a
+     rectangle with a sharp, unshadowed hole — exactly frame-box-sized, ~5px
+     outside the bezel silhouette (the PNG's transparent margin). Safari made
+     it stark because it also drops the ancestor filter over <video> (no soft
+     halo left to mask it); Chrome kept rendering the halo over it. Both the
+     stale box-shadow and the ancestor filter are gone now. */
   clip-path: inset(0 round 33px);
   transform: translateZ(0);
 }
@@ -259,7 +298,11 @@ picture[data-reveal] { display: inline-block; }
 
 .phone-frame--small {
   width: 184px;
-  margin-top: 24px;
+  margin-top: 4px;
+  /* img-only subtree — Safari renders the filter here without complaint. */
+  filter:
+    drop-shadow(rgba(41, 32, 24, 0.20) 0 6px 16px)
+    drop-shadow(rgba(41, 32, 24, 0.32) 0 24px 50px);
 }
 .phone-frame--small .phone-screen {
   border-radius: 23px;
@@ -273,7 +316,7 @@ picture[data-reveal] { display: inline-block; }
 .app-widget-row {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 20px;
+  gap: 1.25rem;
   width: 100%;
   /* stretch, not start: the three carry different note counts, so top-aligning
      them left ragged bottoms and put each capture row at a different height. */
@@ -286,28 +329,33 @@ picture[data-reveal] { display: inline-block; }
   --w-muted: #7e6c5b;
   --w-bar:   #744f34;
   width: 100%;
-  margin-top: 8px;
+  margin-top: 0.5rem;
   background: var(--w-paper);
   border-radius: 28px;
-  padding: 17px 19px;
+  padding: 1.0625rem 1.1875rem;
   display: flex;
   flex-direction: column;
-  gap: 11px;
+  gap: 0.6875rem;
   text-align: left;
+  /* Warm neutral, not pure black — same light source as the device frames.
+     Measured on the white page: the old rgba(0,0,0,.10/.16) rendered a flatly
+     grey #cdcdcd falloff. In DARK mode the widget sits on #000000 and the
+     shadow measures invisible, which is why that block still carries black. */
   box-shadow:
-    rgba(0, 0, 0, 0.10) 0 6px 18px,
-    rgba(0, 0, 0, 0.16) 0 22px 50px;
+    rgba(41, 32, 24, 0.10) 0 6px 18px,
+    rgba(41, 32, 24, 0.16) 0 22px 50px;
 }
 .app-widget-label {
-  font-size: 10px;
+  font-size: 0.625rem;
   font-weight: 500;
   letter-spacing: 0.06em;
   text-transform: uppercase;
   color: var(--w-muted);
+  white-space: nowrap;
 }
 .app-widget-note {
   display: flex;
-  gap: 9px;
+  gap: 0.5625rem;
   align-items: stretch;
   opacity: var(--o, 1);
 }
@@ -321,17 +369,18 @@ picture[data-reveal] { display: inline-block; }
 .app-widget-body {
   display: flex;
   flex-direction: column;
-  gap: 3px;
+  gap: 0.1875rem;
 }
 .app-widget-text {
-  font-size: 14px;
+  font-size: 0.875rem;
   line-height: 1.25;
   letter-spacing: -0.01em;
   color: var(--w-ink);
 }
 .app-widget-time {
-  font-size: 11px;
+  font-size: 0.6875rem;
   color: var(--w-muted);
+  white-space: nowrap;
 }
 /* Pinned notes draw their bar in PensieveAmber rather than PensieveRelease —
    same distinction the widget makes, so "held" reads differently at a glance. */
@@ -341,13 +390,13 @@ picture[data-reveal] { display: inline-block; }
 .app-widget-capture {
   display: flex;
   align-items: center;
-  gap: 7px;
+  gap: 0.4375rem;
   /* auto, not a fixed gap: with equal-height cards this pins the row to the
      bottom so all three line up, exactly as they do on a home screen. */
   margin-top: auto;
-  padding-top: 9px;
+  padding-top: 0.5625rem;
   border-top: 0.5px solid rgba(126, 108, 91, 0.28);
-  font-size: 12px;
+  font-size: 0.75rem;
   font-weight: 500;
   color: var(--w-muted);
 }
@@ -372,7 +421,7 @@ picture[data-reveal] { display: inline-block; }
 
 /* ─ mechanic ─────────────────────────────────────────────── */
 .mechanic {
-  padding: 80px 24px;
+  padding: 5rem 1.5rem;
 }
 .mechanic .wrap {
   display: grid;
@@ -381,54 +430,62 @@ picture[data-reveal] { display: inline-block; }
 }
 .mechanic-step {
   background: var(--bg-card);
-  padding: 40px 32px;
+  padding: 2.5rem 2rem;
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 0.75rem;
 }
 .mechanic-step:first-child { border-radius: var(--r-card) 0 0 var(--r-card); }
 .mechanic-step:last-child  { border-radius: 0 var(--r-card) var(--r-card) 0; }
 .step-num {
-  font-size: 11px;
+  font-size: 0.6875rem;
   font-weight: 500;
   letter-spacing: 0.12em;
   text-transform: uppercase;
   color: var(--accent);
+  white-space: nowrap;
 }
 .mechanic-step h3 {
-  font-size: 36px;
+  font-size: 2.25rem;
   font-weight: 700;
   letter-spacing: -0.03em;
   line-height: 1.05;
   color: var(--ink);
 }
 .mechanic-step p {
-  font-size: 15px;
+  font-size: 0.9375rem;
   font-weight: 400;
   line-height: 1.6;
   color: var(--muted);
 }
+/* The copy decides how tall it is; it must not decide where the phone starts.
+   Let it eat the card's leftover height so every frame is pushed to the card
+   bottom. The cards are equal height (grid stretch) and the frames are all the
+   same size, so bottom-aligning them aligns their tops too — at any width, and
+   however many lines a step's sentence happens to wrap to. */
+.mechanic-step--with-screen p { flex-grow: 1; }
 
 /* ─ features ─────────────────────────────────────────────── */
 .features {
-  padding: 80px 24px;
+  padding: 5rem 1.5rem;
 }
 .features-header {
-  margin-bottom: 48px;
+  margin-bottom: 3rem;
 }
 .features-header h2 {
-  font-size: 48px;
+  font-size: 3rem;
   font-weight: 700;
   letter-spacing: -0.03em;
   line-height: 1.05;
   color: var(--ink);
-  margin-bottom: 12px;
+  margin-bottom: 0.75rem;
 }
 .features-header p {
-  font-size: 19px;
+  font-size: 1.1875rem;
   font-weight: 300;
   color: var(--muted);
   letter-spacing: -0.01em;
+  max-width: 46ch;
 }
 .features-grid {
   display: grid;
@@ -437,22 +494,22 @@ picture[data-reveal] { display: inline-block; }
 }
 .feature-card {
   background: var(--bg-card);
-  padding: 36px 28px;
+  padding: 2.25rem 1.75rem;
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 0.75rem;
 }
 .feature-card:first-child { border-radius: var(--r-card) 0 0 var(--r-card); }
 .feature-card:last-child  { border-radius: 0 var(--r-card) var(--r-card) 0; }
 .feature-card h3 {
-  font-size: 21px;
+  font-size: 1.3125rem;
   font-weight: 600;
   letter-spacing: -0.02em;
   line-height: 1.15;
   color: var(--ink);
 }
 .feature-card p {
-  font-size: 15px;
+  font-size: 0.9375rem;
   font-weight: 400;
   line-height: 1.6;
   color: var(--muted);
@@ -460,22 +517,23 @@ picture[data-reveal] { display: inline-block; }
 
 /* ─ widgets ──────────────────────────────────────────────── */
 .widgets {
-  padding: 80px 24px;
+  padding: 5rem 1.5rem;
 }
 .widgets h2 {
-  font-size: 48px;
+  font-size: 3rem;
   font-weight: 700;
   letter-spacing: -0.03em;
   line-height: 1.05;
   color: var(--ink);
-  margin-bottom: 12px;
+  margin-bottom: 0.75rem;
 }
 .widgets > .wrap > p {
-  font-size: 19px;
+  font-size: 1.1875rem;
   font-weight: 300;
   letter-spacing: -0.01em;
   color: var(--muted);
-  margin-bottom: 48px;
+  margin-bottom: 3rem;
+  max-width: 46ch;
 }
 /* Left-aligned, like the features section above it. Centring made the two
    read as different kinds of section when they are the same kind. */
@@ -487,9 +545,7 @@ picture[data-reveal] { display: inline-block; }
 
 /* ─ privacy ──────────────────────────────────────────────── */
 .privacy {
-  padding: 80px 24px;
-  text-align: center;
-  position: relative;
+  padding: 5rem 1.5rem;
 }
 /* One accent hairline, on the one section that carries the promise. Sits over
    the grey rule rather than replacing it, so the section still aligns with
@@ -497,25 +553,24 @@ picture[data-reveal] { display: inline-block; }
 /* With the section rules gone this is the page's only divider — a deliberate
    mark where the argument turns to the promise, rather than a hairline on
    every seam. */
-.privacy::before {
+/* The page's only divider, left-aligned with the text rather than centred, and
+   in flow so it starts exactly where the copy does at any width. */
+.privacy .wrap::before {
   content: '';
-  position: absolute;
-  top: 0;
-  left: 50%;
-  transform: translateX(-50%);
+  display: block;
   width: 72px;
   height: 2px;
   background: var(--accent);
   border-radius: 1px;
+  margin-bottom: 1.75rem;
 }
 .privacy p {
-  font-size: 28px;
+  font-size: 1.75rem;
   font-weight: 300;
   line-height: 1.4;
   letter-spacing: -0.02em;
   color: var(--muted);
-  max-width: 560px;
-  margin: 0 auto;
+  max-width: 38.75rem;
 }
 .privacy p strong {
   color: var(--ink);
@@ -523,27 +578,27 @@ picture[data-reveal] { display: inline-block; }
 }
 .privacy-link {
   display: inline-block;
-  margin-top: 24px;
-  font-size: 15px;
+  margin-top: 1.5rem;
+  font-size: 0.9375rem;
   color: var(--accent);
   transition: opacity 0.15s var(--ease-out);
 }
 
 /* ─ faq ──────────────────────────────────────────────────── */
 .faq {
-  padding: 80px 24px;
+  padding: 5rem 1.5rem;
 }
 .faq-title {
-  font-size: 48px;
+  font-size: 3rem;
   font-weight: 700;
   letter-spacing: -0.03em;
   color: var(--ink);
-  margin-bottom: 48px;
-  text-align: center;
+  margin-bottom: 3rem;
 }
+/* Left, not centred, so the heading sits above the first question instead of
+   floating over the middle of it. Width still capped for readability. */
 .faq-list {
-  max-width: 640px;
-  margin: 0 auto;
+  max-width: 40rem;
 }
 .faq-item {
   border-top: 1px solid var(--rule);
@@ -560,11 +615,11 @@ picture[data-reveal] { display: inline-block; }
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 16px;
+  gap: 1rem;
   width: 100%;
-  padding: 20px 0;
+  padding: 1.25rem 0;
   font-family: var(--font);
-  font-size: 17px;
+  font-size: 1.0625rem;
   font-weight: 600;
   letter-spacing: -0.02em;
   color: var(--ink);
@@ -576,12 +631,16 @@ picture[data-reveal] { display: inline-block; }
 }
 .faq-question::after {
   content: '';
-  width: 16px;
-  height: 16px;
+  width: 1rem;
+  height: 1rem;
   flex-shrink: 0;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M8 3v10M3 8h10' stroke='%23b09070' stroke-width='1.5' stroke-linecap='round'/%3E%3C/svg%3E");
-  background-size: contain;
-  background-repeat: no-repeat;
+  /* Masked, not a pre-coloured data URI. The stroke used to be #b09070 baked
+     into the SVG, so in light mode this glyph kept the DARK-mode accent while
+     every other accent on the page switched to #744f34. Painting the token
+     through a mask makes it follow the theme like everything else. */
+  background: var(--accent);
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M8 3v10M3 8h10' stroke='%23000' stroke-width='1.5' stroke-linecap='round'/%3E%3C/svg%3E") center / contain no-repeat;
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M8 3v10M3 8h10' stroke='%23000' stroke-width='1.5' stroke-linecap='round'/%3E%3C/svg%3E") center / contain no-repeat;
   transition: transform 0.24s var(--ease-out);
 }
 .faq-question[aria-expanded="true"]::after {
@@ -609,27 +668,60 @@ html.js .faq-answer.is-open {
     visibility 0s;
 }
 .faq-answer > .faq-answer-inner > p {
-  font-size: 15px;
+  font-size: 0.9375rem;
   font-weight: 400;
   line-height: 1.6;
   color: var(--muted);
-  padding-bottom: 20px;
+  padding-bottom: 1.25rem;
+  max-width: 68ch;
+}
+
+/* ─ closing ──────────────────────────────────────────────── */
+/* An ending beat. The page previously ran out on the last FAQ answer, leaving a
+   convinced reader with nothing to act on and the only badge far above. Left
+   aligned like every other section, and no top padding — the FAQ's last rule
+   already provides the seam. */
+.closing {
+  padding: 0 1.5rem 5rem;
+}
+.closing .wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 1.25rem;
+}
+.closing-line {
+  font-size: 1.75rem;
+  font-weight: 300;
+  line-height: 1.4;
+  letter-spacing: -0.02em;
+  color: var(--ink);
+  max-width: 20ch;
+}
+/* Its own class rather than reusing .hero-cta: that one centres itself under
+   900px to sit beneath the centred hero, which would strand this badge in the
+   middle of a left-aligned section. */
+.closing-cta {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.625rem;
 }
 
 /* ─ footer ───────────────────────────────────────────────── */
 .footer {
   border-top: 1px solid var(--rule);
-  padding: 40px 24px;
+  padding: 2.5rem 1.5rem;
 }
 .footer .wrap {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 16px;
+  gap: 1rem;
   flex-wrap: wrap;
 }
 .footer-name {
-  font-size: 14px;
+  font-size: 0.875rem;
   font-weight: 500;
   color: var(--ink);
   letter-spacing: -0.01em;
@@ -637,15 +729,17 @@ html.js .faq-answer.is-open {
 .footer-links {
   display: flex;
   align-items: center;
-  gap: 20px;
+  /* 24, not 20: the two links each extend their hit area 10px sideways, so a
+     20px gap left them touching at exactly 0px of clearance. */
+  gap: 1.5rem;
 }
 .footer-link {
-  font-size: 13px;
+  font-size: 0.8125rem;
   color: var(--muted);
-  transition: color 0.15s var(--ease-out);
+  transition: color 0.15s var(--ease-out), opacity 0.15s var(--ease-out);
 }
 .footer-legal {
-  font-size: 12px;
+  font-size: 0.75rem;
   color: var(--muted);
   flex-basis: 100%;
 }
@@ -673,47 +767,59 @@ html.js .faq-answer.is-open {
 }
 
 /* ─ hit targets ──────────────────────────────────────────── */
-/* The nav and footer links are 13-14px text with no padding, so their real
-   hit area was the line box — well under the 44px a thumb needs. Expand it
-   with a pseudo-element so nothing moves visually. */
+/* The nav, footer and privacy links are 13-15px text with no padding, so
+   their real hit area was the line box — well under the 44px a thumb needs.
+   Expand it with a pseudo-element so nothing moves visually. Each extension
+   is checked against its neighbours: the footer pair now clears by 4px, and
+   the nav link and the privacy link each stand alone in their row. */
 .nav-link,
-.footer-link {
+.footer-link,
+.privacy-link {
   position: relative;
 }
 .nav-link::after,
 .footer-link::after {
   content: '';
   position: absolute;
-  inset: -14px -10px;
+  inset: -0.875rem -0.625rem;
+}
+.privacy-link::after {
+  content: '';
+  position: absolute;
+  inset: -0.8125rem -0.5rem;
 }
 
 /* ─ responsive ───────────────────────────────────────────── */
 /* One column below 900px: at two columns the copy well gets too narrow for a
    68px headline long before the 833px breakpoint the card grids use. */
-@media (max-width: 900px) {
+@media (max-width: 56.25em) {
   .hero-grid {
     grid-template-columns: 1fr;
-    gap: 40px;
+    gap: 2.5rem;
   }
   .hero-copy { align-items: center; text-align: center; }
-  .app-widget-row { grid-template-columns: 1fr; max-width: 340px; margin: 0 auto; }
+  .app-widget-row { grid-template-columns: 1fr; max-width: 21.25rem; margin: 0 auto; }
   .hero-cta  { align-items: center; }
-  .hero-sub  { max-width: 420px; }
+  .hero-sub  { max-width: 26.25rem; }
 }
 
-@media (max-width: 640px) {
+@media (max-width: 40em) {
   /* Let .wrap own the horizontal gutter; sections drop side padding. */
   .hero,
   .mechanic,
   .features,
   .widgets,
   .privacy,
-  .faq { padding-left: 0; padding-right: 0; }
-  .nav .wrap { padding: 0 20px; }
+  .faq,
+  .closing,
+  .footer { padding-left: 0; padding-right: 0; }
+  /* 1.5rem, matching every other gutter. This was the page's only 20px. */
+  .nav .wrap { padding: 0 1.5rem; }
 
-  .hero-title { font-size: 46px; }
-  .hero-sub   { font-size: 17px; }
-  .privacy p { font-size: 23px; }
+  .hero-title { font-size: 2.875rem; }
+  .hero-sub   { font-size: 1.0625rem; }
+  .privacy p   { font-size: 1.4375rem; }
+  .closing-line { font-size: 1.5rem; }
 
   .mechanic .wrap,
   .features-grid {
@@ -730,17 +836,17 @@ html.js .faq-answer.is-open {
   .feature-card:last-child  { border-radius: 0 0 var(--r-card) var(--r-card); }
 
   .features-header h2,
-  .widgets h2 { font-size: 34px; }
+  .widgets h2 { font-size: 2.125rem; }
 
   .footer .wrap {
     flex-direction: column;
-    gap: 12px;
+    gap: 0.75rem;
     align-items: flex-start;
   }
 }
 
-@media (max-width: 833px) and (min-width: 641px) {
-  .hero-title { font-size: 56px; }
+@media (max-width: 52.0625em) and (min-width: 40.0625em) {
+  .hero-title { font-size: 3.5rem; }
 
   .mechanic .wrap,
   .features-grid { grid-template-columns: 1fr; }
@@ -755,10 +861,13 @@ html.js .faq-answer.is-open {
 /* ─ reduced motion ───────────────────────────────────────── */
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
+  /* Gentler, not zero. Reduced motion asks for no vestibular movement, not for
+     content to appear instantly — so the translate goes and the cross-fade
+     stays. The JS path already marks every reveal in-view at once under this
+     setting, so nothing here depends on scrolling. */
   html.js [data-reveal] {
-    opacity: 1;
     transform: none;
-    transition: none;
+    transition: opacity 0.42s var(--ease-out) var(--d, 0ms);
   }
   .faq-answer,
   html.js .faq-answer,
@@ -780,11 +889,43 @@ html.js .faq-answer.is-open {
     --nav-bg:      rgba(255, 255, 255, 0.82);
     --icon-shadow: rgba(41, 32, 24, 0.10) 0 4px 12px, rgba(41, 32, 24, 0.10) 0 16px 48px;
   }
+  .app-icon-img { outline-color: rgba(0, 0, 0, 0.08); }
+  /* No .phone-frame box-shadow here. The one this block used to carry was a
+     leftover from the gradient-bezel era (opaque, border-radius: 54px); on
+     the transparent, square frame it painted the infamous "Safari white
+     rectangle" — see the note in .phone-screen. */
+}
 
-  .phone-frame {
-    box-shadow:
-      inset 0 0 0 1.5px rgba(255, 255, 255, 0.10),
-      rgba(0, 0, 0, 0.10) 0 6px 16px,
-      rgba(0, 0, 0, 0.16) 0 32px 70px;
+/* ─ reduced transparency ─────────────────────────────────── */
+/* The nav is the page's only translucent material. When the viewer has asked
+   for less transparency it becomes an ordinary solid bar: raise the background
+   to full opacity and drop the blur entirely, rather than frosting it harder. */
+@media (prefers-reduced-transparency: reduce) {
+  .nav {
+    background: var(--bg);
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
+}
+
+/* ─ increased contrast ───────────────────────────────────── */
+/* Secondary text and hairlines carry almost all of this page's quietness, so
+   they are what has to give. Both blocks sit after the light-mode block on
+   purpose — otherwise light mode would reset --muted straight back. */
+@media (prefers-contrast: more) {
+  :root {
+    --muted: #a1a1a6;
+    --rule:  #4a4a4a;
+  }
+  .nav {
+    background: var(--bg);
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
+}
+@media (prefers-contrast: more) and (prefers-color-scheme: light) {
+  :root {
+    --muted: #4a4a52;
+    --rule:  #8e8e93;
   }
 }
