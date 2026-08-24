@@ -275,7 +275,9 @@ picture[data-reveal] { display: inline-block; }
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 20px;
   width: 100%;
-  align-items: start;
+  /* stretch, not start: the three carry different note counts, so top-aligning
+     them left ragged bottoms and put each capture row at a different height. */
+  align-items: stretch;
 }
 
 .app-widget {
@@ -340,7 +342,9 @@ picture[data-reveal] { display: inline-block; }
   display: flex;
   align-items: center;
   gap: 7px;
-  margin-top: 2px;
+  /* auto, not a fixed gap: with equal-height cards this pins the row to the
+     bottom so all three line up, exactly as they do on a home screen. */
+  margin-top: auto;
   padding-top: 9px;
   border-top: 0.5px solid rgba(126, 108, 91, 0.28);
   font-size: 12px;
@@ -369,7 +373,6 @@ picture[data-reveal] { display: inline-block; }
 /* ─ mechanic ─────────────────────────────────────────────── */
 .mechanic {
   padding: 80px 24px;
-  border-top: 1px solid var(--rule);
 }
 .mechanic .wrap {
   display: grid;
@@ -409,7 +412,6 @@ picture[data-reveal] { display: inline-block; }
 /* ─ features ─────────────────────────────────────────────── */
 .features {
   padding: 80px 24px;
-  border-top: 1px solid var(--rule);
 }
 .features-header {
   margin-bottom: 48px;
@@ -459,42 +461,46 @@ picture[data-reveal] { display: inline-block; }
 /* ─ widgets ──────────────────────────────────────────────── */
 .widgets {
   padding: 80px 24px;
-  border-top: 1px solid var(--rule);
-  text-align: center;
 }
 .widgets h2 {
   font-size: 48px;
   font-weight: 700;
   letter-spacing: -0.03em;
+  line-height: 1.05;
   color: var(--ink);
   margin-bottom: 12px;
 }
 .widgets > .wrap > p {
   font-size: 19px;
   font-weight: 300;
+  letter-spacing: -0.01em;
   color: var(--muted);
-  margin-bottom: 40px;
+  margin-bottom: 48px;
 }
+/* Left-aligned, like the features section above it. Centring made the two
+   read as different kinds of section when they are the same kind. */
 .widgets .wrap {
   display: flex;
   flex-direction: column;
-  align-items: center;
+  align-items: stretch;
 }
 
 /* ─ privacy ──────────────────────────────────────────────── */
 .privacy {
   padding: 80px 24px;
-  border-top: 1px solid var(--rule);
   text-align: center;
   position: relative;
 }
 /* One accent hairline, on the one section that carries the promise. Sits over
    the grey rule rather than replacing it, so the section still aligns with
    every other divider on the page. */
+/* With the section rules gone this is the page's only divider — a deliberate
+   mark where the argument turns to the promise, rather than a hairline on
+   every seam. */
 .privacy::before {
   content: '';
   position: absolute;
-  top: -1px;
+  top: 0;
   left: 50%;
   transform: translateX(-50%);
   width: 72px;
@@ -526,7 +532,6 @@ picture[data-reveal] { display: inline-block; }
 /* ─ faq ──────────────────────────────────────────────────── */
 .faq {
   padding: 80px 24px;
-  border-top: 1px solid var(--rule);
 }
 .faq-title {
   font-size: 48px;
