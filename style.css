@@ -871,7 +871,7 @@ html:not(.js) .demo { display: none; }
 .faq-answer {
   display: grid;
   grid-template-rows: 1fr;
-  /* An answer is a link target (#faq-a3, from the privacy section). Without
+  /* An answer is a link target (#faq-pricing, from the privacy section). Without
      this the jump parks the answer at y=0 with its own question scrolled off
      the top, under the nav — 4rem of nav plus ~4rem of question row. */
   scroll-margin-top: 8rem;
