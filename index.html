@@ -55,10 +55,21 @@
       // Called again from inside the body the moment a batch of [data-scheme]
       // sources has been parsed. DOMContentLoaded on its own is too late: an
       // override that disagrees with the system leaves the browser resolving
-      // each <picture> against prefers-color-scheme, so it picks — and starts
-      // fetching — the wrong file, then swaps once the media attributes are
-      // rewritten. That is a discarded download and exactly the one-theme-
-      // then-the-other flash the note at the top promises not to do.
+      // each <picture> against prefers-color-scheme, so it renders the wrong
+      // file until the media attributes are rewritten. Painting at parse
+      // position closes that flash.
+      //
+      // It does NOT close the wasted fetch, and this comment used to claim it
+      // did. The preload scanner reads ahead of the parser and queues the
+      // OS-matching sources before any inline script runs, so an override that
+      // disagrees with the system pulls both sets: measured at 4 dark + 4 light
+      // webp on a light OS with "dark" stored, roughly 100 KB spent twice.
+      // Nothing executed from inside the document can beat the scanner. The
+      // only real fix is to move srcset behind data-srcset and populate it from
+      // JS, which trades this cost for a page whose images vanish entirely
+      // without JS — a bad trade for a marketing page that currently renders
+      // fully without it. Default "auto" never pays this; only a reader who has
+      // explicitly chosen the theme their OS disagrees with does, once.
       window.pensievePaint = paint;
 
       document.addEventListener('DOMContentLoaded', function () {
@@ -109,7 +120,17 @@
     "applicationCategory": "LifestyleApplication",
     "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
     "description": "a journaling app that forgets on purpose. write a thought, watch it fade, let it go.",
-    "url": "https://theanhgen.github.io/pensieve-site/"
+    "url": "https://theanhgen.github.io/pensieve-site/",
+    "author": {
+      "@type": "Person",
+      "name": "nguyen the anh",
+      "url": "https://theanhgen.github.io/pensieve-site/why.html"
+    },
+    "creator": {
+      "@type": "Person",
+      "name": "nguyen the anh",
+      "url": "https://theanhgen.github.io/pensieve-site/why.html"
+    }
   }
   </script>
   <script type="application/ld+json">
@@ -130,7 +151,7 @@
       {
         "@type": "Question",
         "name": "is there a subscription or cost?",
-        "acceptedAnswer": { "@type": "Answer", "text": "pensieve is free. an optional supporter purchase unlocks never, an extra option when you release a note: those notes stay until you delete them, rather than being paused the way a pin is. everything else is free, with no ads and nothing to sign up for." }
+        "acceptedAnswer": { "@type": "Answer", "text": "pensieve is free, with no ads and nothing to sign up for. an optional supporter purchase unlocks never: a note released that way stays until you delete it, rather than being paused the way a pin is." }
       },
       {
         "@type": "Question",
@@ -191,11 +212,11 @@
             <source srcset="icon-dark.png" media="(prefers-color-scheme: dark)" data-scheme="dark">
             <img src="icon.png" alt="pensieve app icon" class="app-icon-img" width="112" height="112">
           </picture>
-          <script>pensievePaint();</script>   <!-- the source above is parsed; fix its media before the browser fetches it -->
+          <script>pensievePaint();</script>   <!-- the source above is parsed; fix its media before it is RENDERED (the scanner has already queued it) -->
           <h1 class="hero-title" data-reveal style="--d:40ms">a week,<br>then gone.
-            <span class="visually-hidden">— pensieve, a journaling app where notes fade and disappear</span>
+            <span class="visually-hidden"> pensieve, a journaling app where notes fade and disappear.</span>
           </h1>
-          <p class="hero-sub" data-reveal style="--d:80ms">notes that fade on their own, so you never have to tidy up after yourself.</p>
+          <p class="hero-sub" data-reveal style="--d:80ms">notes fade on their own. nothing to file, nothing to tidy up later.</p>
           <div class="hero-cta" data-reveal style="--d:120ms">
             <img src="appstore-badge.svg" alt="Download on the App Store" class="appstore-badge" width="146" height="48">
             <span class="hero-cta-note">coming soon</span>
@@ -326,7 +347,7 @@
           </div>
         </div>
       </div>
-      <script>pensievePaint();</script>   <!-- same again for the six sources above -->
+      <script>pensievePaint();</script>   <!-- same again for the six sources above; closes the flash, not the fetch -->
     </section>
 
     <!-- The one place on the page where the reader's own words fade. Every part
@@ -339,7 +360,7 @@
       <div class="wrap">
         <div class="demo-header" data-reveal>
           <h2>watch one go.</h2>
-          <p>type a thought and leave it. it fades over about twenty seconds here — in the app you’d have a week.</p>
+          <p>type a thought and leave it. it fades over about twenty seconds here. in the app you’d have a week.</p>
         </div>
 
         <div class="demo-stage">
@@ -350,7 +371,7 @@
             <button class="demo-submit" type="submit">release</button>
           </form>
 
-          <p class="demo-privacy" data-reveal style="--d:40ms">nothing you type here leaves your browser — not stored, not sent, no third parties.</p>
+          <p class="demo-privacy" data-reveal style="--d:40ms">nothing you type here leaves your browser: not stored, not sent, no third parties.</p>
 
           <!-- Same card, same 3px bar, same type as the widget mockups below:
                what fades here is meant to read as the same object. -->
@@ -367,16 +388,16 @@
       <div class="wrap">
         <div class="features-header" data-reveal>
           <h2>built to forget.</h2>
-          <p>most apps keep everything. pensieve keeps only what you choose.</p>
+          <p>you keep what you meant to keep. the rest goes on its own, and mostly you won’t miss it.</p>
         </div>
         <div class="features-grid">
           <div class="feature-card" data-reveal style="--d:0ms">
             <h3>pin it,<br>or extend it.</h3>
-            <p>need one a bit longer, hold on to it. everything else goes on its own, with nothing to decide.</p>
+            <p>need one a bit longer, hold on to it. the rest goes sooner than you’d like. that’s the point, and it’s also the cost.</p>
           </div>
           <div class="feature-card" data-reveal style="--d:40ms">
             <h3>no archive,<br>no search.</h3>
-            <p>there is nowhere to go digging. the past doesn’t follow you here.</p>
+            <p>nowhere to scroll back to. you go looking for something once, and then you stop looking.</p>
           </div>
           <div class="feature-card" data-reveal style="--d:80ms">
             <h3>no account,<br>no tracking.</h3>
@@ -502,7 +523,7 @@
              learning the app is free. This line is a compression of that
              answer and links to it, so drift between the two is one click to
              spot. Set a step quieter than the promise above it. -->
-        <p class="privacy-price">free. an optional supporter purchase unlocks <a href="#faq-pricing"><em>never</em></a> — notes that stay.</p>
+        <p class="privacy-price">free. an optional supporter purchase unlocks <a href="#faq-pricing"><em>never</em></a>, notes that stay.</p>
         <a href="privacy.html" class="privacy-link">read the privacy policy →</a>
       </div>
     </section>
@@ -532,7 +553,7 @@
               <button class="faq-question" aria-expanded="false" aria-controls="faq-pricing">is there a subscription or cost?</button>
             </h3>
             <div class="faq-answer" id="faq-pricing"><div class="faq-answer-inner">
-              <p>pensieve is free. an optional supporter purchase unlocks <em>never</em>, an extra option when you release a note: those notes stay until you delete them, rather than being paused the way a pin is. everything else is free, with no ads and nothing to sign up for.</p>
+              <p>pensieve is free, with no ads and nothing to sign up for. an optional supporter purchase unlocks <em>never</em>: a note released that way stays until you delete it, rather than being paused the way a pin is.</p>
             </div></div>
           </div>
           <div class="faq-item" data-reveal style="--d:120ms">
@@ -584,7 +605,7 @@
          "coming soon" — it is still not a link. -->
     <section class="closing">
       <div class="wrap" data-reveal>
-        <p class="closing-line">a week is usually enough.</p>
+        <p class="closing-line">a week is usually enough. or rather it isn’t, and you pin the one that matters.</p>
         <div class="closing-cta">
           <img src="appstore-badge.svg" alt="Download on the App Store" class="appstore-badge" width="146" height="48">
           <span class="hero-cta-note">coming soon</span>
@@ -601,6 +622,7 @@
         <!-- No FAQ link here: the FAQ ends directly above this footer, so the
              link asks the reader to jump to where they already are. It stays in
              the nav, which is where a jump is actually useful. -->
+        <a href="why.html" class="footer-link">why</a>
         <a href="privacy.html" class="footer-link">privacy</a>
         <a href="mailto:bibybi@icloud.com" class="footer-link">contact</a>
       </nav>
@@ -806,8 +828,13 @@
 
         // Reduced motion: there is no fade to wait on — the CSS turned the
         // animation off, so animationend never fires and this is the only path
-        // that ends the note. It is released outright instead.
-        if (motion.matches) release(note);
+        // that ends the note. Releasing it here synchronously would call
+        // replaceChildren before the browser painted a single frame, so the
+        // one reader who most needs the feedback would watch their own words
+        // never appear at all. Reduced motion asks for no movement, not for no
+        // information: hold the note long enough to read, then release it
+        // without animating anything.
+        if (motion.matches) setTimeout(function () { release(note); }, 2500);
 
         input.focus();
       });
