@@ -365,17 +365,31 @@ html[data-theme] .theme-toggle { display: inline-flex; }
   :root:not([data-theme]) .device-shot--light { display: none; }
 }
 
+/* The mechanic cards: no bezel, no device silhouette — a plain rounded crop
+   of the app's notes region, full-bleed at the card's content width. The
+   bezel cost too much: of the old 184px frame only ~170px was screen, and a
+   440pt-wide capture shown at 170px rendered the note text at ~6px. Cropped
+   and bezel-free the same card fits a ~245px-wide image, which is what sets
+   the text size — width, not the crop itself, is the whole mechanism. */
 .phone-frame--small {
-  width: 184px;
+  width: 100%;
   margin-top: 4px;
-  /* img-only subtree — Safari renders the filter here without complaint. */
+  aspect-ratio: auto;
+  /* img-only subtree — Safari renders the filter here without complaint.
+     Kept: without a shadow the flat crops look pasted onto the card. */
   filter:
     drop-shadow(rgba(41, 32, 24, 0.20) 0 6px 16px)
     drop-shadow(rgba(41, 32, 24, 0.32) 0 24px 50px);
 }
 .phone-frame--small .phone-screen {
-  border-radius: 23px;
-  clip-path: inset(0 round 23px);
+  position: static;
+  width: 100%;
+  height: auto;
+  border-radius: 12px;
+  clip-path: none;
+}
+.phone-frame--small .device-shot {
+  height: auto;
 }
 
 /* ─ Fading home-screen widget (matches the real app widget) ─ */
@@ -508,7 +522,10 @@ html[data-theme] .theme-toggle { display: inline-flex; }
 }
 .mechanic .wrap {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  /* minmax(0), like .app-widget-row: the cards now hold full-bleed images,
+     and a bare 1fr's min-content floor lets those push the column past the
+     viewport on narrow screens. */
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 2px;
 }
 .mechanic-step {
@@ -517,6 +534,10 @@ html[data-theme] .theme-toggle { display: inline-flex; }
   display: flex;
   flex-direction: column;
   gap: 0.75rem;
+  /* The full-bleed card images have a large intrinsic width; without this the
+     grid item's auto minimum lets them force the card past the track (and,
+     on phones, past the viewport). */
+  min-width: 0;
 }
 .mechanic-step:first-child { border-radius: var(--r-card) 0 0 var(--r-card); }
 .mechanic-step:last-child  { border-radius: 0 var(--r-card) var(--r-card) 0; }
@@ -1075,7 +1096,7 @@ html.js .faq-answer.is-open {
 
   .mechanic .wrap,
   .features-grid {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
     gap: 2px;
   }
   .mechanic-step:first-child,
@@ -1102,7 +1123,7 @@ html.js .faq-answer.is-open {
   .hero-title { font-size: 3.5rem; }
 
   .mechanic .wrap,
-  .features-grid { grid-template-columns: 1fr; }
+  .features-grid { grid-template-columns: minmax(0, 1fr); }
   .mechanic-step:first-child,
   .feature-card:first-child { border-radius: var(--r-card) var(--r-card) 0 0; }
   .mechanic-step:last-child,
