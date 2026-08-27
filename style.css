@@ -18,6 +18,15 @@
   color-scheme: light dark;
 }
 
+/* ─ theme states ─────────────────────────────────────────── */
+/* Three states, written to data-theme before first paint: "auto" (or no
+   attribute at all, which is what a reader without JS gets) leaves every
+   prefers-color-scheme query below in charge; "light" and "dark" override it.
+   An explicit choice also pins the UA's own surfaces — form controls, the
+   scrollbar — so the page and its chrome cannot disagree. */
+:root[data-theme="light"] { color-scheme: light; }
+:root[data-theme="dark"]  { color-scheme: dark; }
+
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 html { scroll-behavior: smooth; }
 body {
@@ -130,6 +139,37 @@ picture[data-reveal] { display: inline-block; }
   color: var(--accent);
   transition: opacity 0.15s var(--ease-out);
 }
+/* 1.25rem, not 1rem: both children extend their hit area sideways (see the
+   hit targets section), and 20px is what leaves them 4px of clearance. */
+.nav-actions {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+}
+/* The word IS the state — "auto", "light", "dark" — and clicking cycles to the
+   next one. Quieter than the nav link beside it: this is a control for the
+   reader who wants it, not a second destination. */
+.theme-toggle {
+  /* Shown only once the head script has set data-theme. Without JS it would
+     cycle nothing, and the page already follows the system on its own. */
+  display: none;
+  align-items: center;
+  font-family: var(--font);
+  font-size: 0.8125rem;
+  font-weight: 400;
+  letter-spacing: -0.01em;
+  color: var(--muted);
+  background: none;
+  border: 1px solid var(--rule);
+  border-radius: 999px;
+  padding: 0.25rem 0.625rem;
+  cursor: pointer;
+  transition:
+    color 0.15s var(--ease-out),
+    border-color 0.15s var(--ease-out),
+    opacity 0.15s var(--ease-out);
+}
+html[data-theme] .theme-toggle { display: inline-flex; }
 
 /* ─ hero ─────────────────────────────────────────────────── */
 /* Two columns: the offer, and the app performing it. The device used to be its
@@ -194,8 +234,20 @@ picture[data-reveal] { display: inline-block; }
   display: block;
   opacity: 0.9;
 }
+/* The asset is the black Apple lockup, so dark is the case that inverts —
+   the one fork on this page running opposite to the tokens above, which are
+   dark by default.
+
+   Every theme fork from here down is written twice: once for the explicit
+   choice, once for "auto" inside the media query. A media query cannot be
+   OR'd with an attribute selector, and the pair is what keeps the page
+   following the system with no JS. The auto half spells out both "auto" and
+   "no attribute yet", so the two halves can never both match and their order
+   never decides anything. */
+:root[data-theme="dark"] .appstore-badge { filter: invert(1); }
 @media (prefers-color-scheme: dark) {
-  .appstore-badge { filter: invert(1); }
+  :root[data-theme="auto"] .appstore-badge,
+  :root:not([data-theme]) .appstore-badge { filter: invert(1); }
 }
 .hero-cta-note {
   font-size: 0.8125rem;
@@ -204,6 +256,17 @@ picture[data-reveal] { display: inline-block; }
   color: var(--accent);
   text-transform: uppercase;
   white-space: nowrap;
+}
+/* Pre-launch lead capture, and the quietest thing in the block: 13px muted
+   text, no border, no fill — the badge stays the CTA. A mailto keeps the
+   "no analytics" line two rows below honest, since nothing loads. */
+.cta-mailto {
+  font-size: 0.8125rem;
+  font-weight: 400;
+  line-height: 1.4;
+  letter-spacing: -0.01em;
+  color: var(--muted);
+  transition: color 0.15s var(--ease-out), opacity 0.15s var(--ease-out);
 }
 .hero-trust {
   font-size: 0.8125rem;
@@ -288,12 +351,18 @@ picture[data-reveal] { display: inline-block; }
   object-fit: cover;
   border-radius: inherit;
 }
-/* Theme-swap the two hero videos (a <video> can't do <picture> media). */
+/* Theme-swap the two hero videos (a <video> can't do <picture> media). The
+   script at the end of the page reads which one is visible to decide which
+   file to fetch, so this rule is also what picks the download. */
 .device-shot--dark  { display: none; }
 .device-shot--light { display: block; }
+:root[data-theme="dark"] .device-shot--dark  { display: block; }
+:root[data-theme="dark"] .device-shot--light { display: none; }
 @media (prefers-color-scheme: dark) {
-  .device-shot--dark  { display: block; }
-  .device-shot--light { display: none; }
+  :root[data-theme="auto"] .device-shot--dark,
+  :root:not([data-theme]) .device-shot--dark  { display: block; }
+  :root[data-theme="auto"] .device-shot--light,
+  :root:not([data-theme]) .device-shot--light { display: none; }
 }
 
 .phone-frame--small {
@@ -407,16 +476,30 @@ picture[data-reveal] { display: inline-block; }
   flex-shrink: 0;
 }
 
+/* Written twice — see the note at .appstore-badge. */
+:root[data-theme="dark"] .app-widget {
+  --w-paper: #17130f;
+  --w-ink:   #e8e1d8;
+  --w-muted: #8a7b6b;
+  --w-bar:   #b09070;
+  box-shadow: rgba(0, 0, 0, 0.45) 0 22px 50px;
+}
+:root[data-theme="dark"] .app-widget--held { --w-bar: #d49567; }
+:root[data-theme="dark"] .app-widget-capture { border-top-color: rgba(138, 123, 107, 0.3); }
+
 @media (prefers-color-scheme: dark) {
-  .app-widget {
+  :root[data-theme="auto"] .app-widget,
+  :root:not([data-theme]) .app-widget {
     --w-paper: #17130f;
     --w-ink:   #e8e1d8;
     --w-muted: #8a7b6b;
     --w-bar:   #b09070;
     box-shadow: rgba(0, 0, 0, 0.45) 0 22px 50px;
   }
-  .app-widget--held { --w-bar: #d49567; }
-  .app-widget-capture { border-top-color: rgba(138, 123, 107, 0.3); }
+  :root[data-theme="auto"] .app-widget--held,
+  :root:not([data-theme]) .app-widget--held { --w-bar: #d49567; }
+  :root[data-theme="auto"] .app-widget-capture,
+  :root:not([data-theme]) .app-widget-capture { border-top-color: rgba(138, 123, 107, 0.3); }
 }
 
 /* ─ mechanic ─────────────────────────────────────────────── */
@@ -515,6 +598,128 @@ picture[data-reveal] { display: inline-block; }
   color: var(--muted);
 }
 
+/* ─ interactive fade demo ────────────────────────────────── */
+/* Without JS the form is a button that reloads the page, and there is nothing
+   for it to demonstrate — so the section is not there at all. */
+html:not(.js) .demo { display: none; }
+
+.demo {
+  padding: 5rem 1.5rem;
+}
+.demo-header {
+  margin-bottom: 2rem;
+}
+.demo-header h2 {
+  font-size: 3rem;
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  line-height: 1.05;
+  color: var(--ink);
+  margin-bottom: 0.75rem;
+}
+.demo-header p {
+  font-size: 1.1875rem;
+  font-weight: 300;
+  letter-spacing: -0.01em;
+  color: var(--muted);
+  max-width: 46ch;
+}
+/* One narrow column, left-aligned with the copy above it — the input, the
+   promise, and the thing the input fills, in the order they are read. */
+.demo-stage {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  max-width: 25rem;
+}
+.demo-form {
+  display: flex;
+  gap: 0.5rem;
+  align-items: stretch;
+}
+.demo-input {
+  flex: 1 1 auto;
+  min-width: 0;
+  font-family: inherit;
+  /* 16px exactly: iOS zooms the whole page in on a focused field below this. */
+  font-size: 1rem;
+  font-weight: 400;
+  letter-spacing: -0.01em;
+  color: var(--ink);
+  background: var(--bg-card);
+  border: 1px solid var(--rule);
+  border-radius: 12px;
+  padding: 0.6875rem 0.875rem;
+}
+.demo-input::placeholder { color: var(--muted); }
+.demo-submit {
+  flex: 0 0 auto;
+  font-family: inherit;
+  font-size: 0.9375rem;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  color: var(--bg);
+  background: var(--ink);
+  border: 0;
+  border-radius: 12px;
+  padding: 0.6875rem 1.125rem;
+  cursor: pointer;
+  transition: opacity 0.15s var(--ease-out);
+}
+.demo-privacy {
+  font-size: 0.8125rem;
+  font-weight: 400;
+  line-height: 1.5;
+  color: var(--muted);
+}
+/* The panel is an .app-widget, so the notes it holds are widget notes. */
+.demo-panel {
+  margin-top: 0;
+  /* Holds its footprint from empty to full, so the first note does not shove
+     the rest of the page down as the reader types. */
+  min-height: 10.5rem;
+}
+.demo-list {
+  display: flex;
+  flex-direction: column;
+  /* Matches the .app-widget gap, so the stack reads as one widget list. */
+  gap: 0.6875rem;
+}
+.demo-empty {
+  font-size: 0.875rem;
+  line-height: 1.25;
+  letter-spacing: -0.01em;
+  color: var(--w-muted);
+}
+.demo-panel:not(.is-empty) .demo-empty { display: none; }
+
+/* Twenty seconds, not a week — a page can only show the shape of it. */
+@keyframes pensieve-fade {
+  from { opacity: 0.92; }
+  to   { opacity: 0; }
+}
+@keyframes pensieve-ghost {
+  from { opacity: 0.6; }
+  to   { opacity: 0; }
+}
+.demo-note {
+  animation: pensieve-fade 20s linear forwards;
+}
+/* The ghost has to outlive the note it replaces. With the fade left running
+   and filling forwards, "released." would be painted at opacity 0 and nobody
+   would ever see the label the whole demo is aiming at. */
+.demo-note.is-released {
+  animation: none;
+  opacity: 1;
+}
+.demo-released {
+  font-size: 0.875rem;
+  line-height: 1.25;
+  letter-spacing: -0.01em;
+  color: var(--w-muted);
+  animation: pensieve-ghost 2s var(--ease-out) forwards;
+}
+
 /* ─ widgets ──────────────────────────────────────────────── */
 .widgets {
   padding: 5rem 1.5rem;
@@ -575,6 +780,21 @@ picture[data-reveal] { display: inline-block; }
 .privacy p strong {
   color: var(--ink);
   font-weight: 400;
+}
+/* One step down from .privacy p on purpose: pricing rides along in this
+   section, it does not compete with the promise that owns it. */
+.privacy-price {
+  margin-top: 1.25rem;
+  font-size: 1.0625rem;
+  font-weight: 400;
+  line-height: 1.6;
+  letter-spacing: -0.01em;
+  color: var(--muted);
+  max-width: 38.75rem;
+}
+.privacy-price a {
+  color: var(--accent);
+  transition: opacity 0.15s var(--ease-out);
 }
 .privacy-link {
   display: inline-block;
@@ -651,6 +871,10 @@ picture[data-reveal] { display: inline-block; }
 .faq-answer {
   display: grid;
   grid-template-rows: 1fr;
+  /* An answer is a link target (#faq-a3, from the privacy section). Without
+     this the jump parks the answer at y=0 with its own question scrolled off
+     the top, under the nav — 4rem of nav plus ~4rem of question row. */
+  scroll-margin-top: 8rem;
 }
 .faq-answer-inner { overflow: hidden; }
 html.js .faq-answer {
@@ -749,9 +973,15 @@ html.js .faq-answer.is-open {
   .nav-link:hover     { opacity: 0.7; }
   .privacy-link:hover { opacity: 0.7; }
   .privacy-link:hover,
+  .privacy-price a:hover,
+  .cta-mailto:hover,
   .nav-link:hover    { text-decoration: underline; text-underline-offset: 4px; }
+  .privacy-price a:hover { opacity: 0.7; }
+  .cta-mailto:hover  { color: var(--ink); }
   .faq-question:hover { opacity: 0.7; }
   .footer-link:hover  { color: var(--ink); }
+  .demo-submit:hover  { opacity: 0.82; }
+  .theme-toggle:hover { color: var(--ink); border-color: var(--muted); }
 }
 
 /* ─ press ────────────────────────────────────────────────── */
@@ -760,8 +990,12 @@ html.js .faq-answer.is-open {
    full-width accordion row, and scaling either one looks like a glitch. */
 .nav-link:active,
 .privacy-link:active,
+.privacy-price a:active,
+.cta-mailto:active,
 .footer-link:active,
-.faq-question:active {
+.faq-question:active,
+.demo-submit:active,
+.theme-toggle:active {
   opacity: 0.55;
   transition-duration: 60ms;
 }
@@ -774,8 +1008,18 @@ html.js .faq-answer.is-open {
    the nav link and the privacy link each stand alone in their row. */
 .nav-link,
 .footer-link,
-.privacy-link {
+.privacy-link,
+.cta-mailto,
+.theme-toggle {
   position: relative;
+}
+/* The pill measures 26px tall, so it needs 9px on each edge to reach 44. The
+   6px sideways leaves 4px between this target and the nav link's, across the
+   1.25rem gap between them. */
+.theme-toggle::after {
+  content: '';
+  position: absolute;
+  inset: -0.5625rem -0.375rem;
 }
 .nav-link::after,
 .footer-link::after {
@@ -784,6 +1028,13 @@ html.js .faq-answer.is-open {
   inset: -0.875rem -0.625rem;
 }
 .privacy-link::after {
+  content: '';
+  position: absolute;
+  inset: -0.8125rem -0.5rem;
+}
+/* Its only neighbours in both CTA stacks are the badge and the "coming soon"
+   note, neither of which is clickable, so the overlap costs nothing. */
+.cta-mailto::after {
   content: '';
   position: absolute;
   inset: -0.8125rem -0.5rem;
@@ -807,6 +1058,7 @@ html.js .faq-answer.is-open {
   /* Let .wrap own the horizontal gutter; sections drop side padding. */
   .hero,
   .mechanic,
+  .demo,
   .features,
   .widgets,
   .privacy,
@@ -836,6 +1088,7 @@ html.js .faq-answer.is-open {
   .feature-card:last-child  { border-radius: 0 0 var(--r-card) var(--r-card); }
 
   .features-header h2,
+  .demo-header h2,
   .widgets h2 { font-size: 2.125rem; }
 
   .footer .wrap {
@@ -875,11 +1128,35 @@ html.js .faq-answer.is-open {
   .faq-question::after {
     transition: none;
   }
+  /* The demo releases a note outright rather than fading it, and the JS reads
+     the same query to drive that. The ghost then holds still for its two
+     seconds instead of dissolving — a fade-out here is the same motion the
+     setting asked us not to make. */
+  .demo-note { animation: none; }
+  .demo-released { animation: none; opacity: 0.6; }
 }
 
 /* ─ light mode ───────────────────────────────────────────── */
+/* Written twice — see the note at .appstore-badge. No .phone-frame box-shadow
+   in either half: the one this block used to carry was a leftover from the
+   gradient-bezel era (opaque, border-radius: 54px); on the transparent, square
+   frame it painted the infamous "Safari white rectangle" — see the note in
+   .phone-screen. */
+:root[data-theme="light"] {
+  --bg:          #ffffff;
+  --bg-card:     #f5f5f7;
+  --ink:         #1d1d1f;
+  --muted:       #6e6e73;
+  --rule:        #d2d2d7;
+  --accent:      #744f34;
+  --nav-bg:      rgba(255, 255, 255, 0.82);
+  --icon-shadow: rgba(41, 32, 24, 0.10) 0 4px 12px, rgba(41, 32, 24, 0.10) 0 16px 48px;
+}
+:root[data-theme="light"] .app-icon-img { outline-color: rgba(0, 0, 0, 0.08); }
+
 @media (prefers-color-scheme: light) {
-  :root {
+  :root[data-theme="auto"],
+  :root:not([data-theme]) {
     --bg:          #ffffff;
     --bg-card:     #f5f5f7;
     --ink:         #1d1d1f;
@@ -889,11 +1166,8 @@ html.js .faq-answer.is-open {
     --nav-bg:      rgba(255, 255, 255, 0.82);
     --icon-shadow: rgba(41, 32, 24, 0.10) 0 4px 12px, rgba(41, 32, 24, 0.10) 0 16px 48px;
   }
-  .app-icon-img { outline-color: rgba(0, 0, 0, 0.08); }
-  /* No .phone-frame box-shadow here. The one this block used to carry was a
-     leftover from the gradient-bezel era (opaque, border-radius: 54px); on
-     the transparent, square frame it painted the infamous "Safari white
-     rectangle" — see the note in .phone-screen. */
+  :root[data-theme="auto"] .app-icon-img,
+  :root:not([data-theme]) .app-icon-img { outline-color: rgba(0, 0, 0, 0.08); }
 }
 
 /* ─ reduced transparency ─────────────────────────────────── */
@@ -922,9 +1196,16 @@ html.js .faq-answer.is-open {
     backdrop-filter: none;
     -webkit-backdrop-filter: none;
   }
+  /* An explicit light choice needs the light pair even on a dark system, so
+     this one cannot live in the media query below with the "auto" half. */
+  :root[data-theme="light"] {
+    --muted: #4a4a52;
+    --rule:  #8e8e93;
+  }
 }
 @media (prefers-contrast: more) and (prefers-color-scheme: light) {
-  :root {
+  :root[data-theme="auto"],
+  :root:not([data-theme]) {
     --muted: #4a4a52;
     --rule:  #8e8e93;
   }

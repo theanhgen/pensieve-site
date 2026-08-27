@@ -9,8 +9,81 @@
   <link rel="canonical" href="https://theanhgen.github.io/pensieve-site/">
   <link rel="icon" href="icon.png">
   <link rel="apple-touch-icon" href="icon.png">
-  <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
-  <meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)">
+  <link rel="manifest" href="site.webmanifest">
+  <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)" data-scheme="light">
+  <meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)" data-scheme="dark">
+
+  <!-- Theme. Runs before the stylesheet so data-theme is on <html> for the
+       first paint and the page never shows one theme and then the other.
+       Three states — auto follows the system, light and dark override it —
+       kept under "pensieve-theme", the only thing this site ever writes to
+       storage, and read the same way by privacy.html. -->
+  <script>
+    (function () {
+      var KEY  = 'pensieve-theme';
+      var NEXT = { auto: 'light', light: 'dark', dark: 'auto' };
+      var root = document.documentElement;
+      var stored = null;
+      try { stored = localStorage.getItem(KEY); } catch (e) {}   // private mode throws
+      // Compared, not looked up: a stray value in storage must land on "auto"
+      // rather than on some inherited property name of the map above.
+      var theme = (stored === 'light' || stored === 'dark' || stored === 'auto') ? stored : 'auto';
+
+      // Everything a [data-theme] selector cannot reach. The media attribute
+      // on a <picture> source or a theme-color meta is resolved by the BROWSER
+      // against the system setting and ignores data-theme entirely, so under
+      // an override each one is rewritten by hand to match all or nothing.
+      // Under "auto" they go back to asking the system themselves.
+      function paint() {
+        root.setAttribute('data-theme', theme);
+        var forked = document.querySelectorAll('[data-scheme]');
+        for (var i = 0; i < forked.length; i++) {
+          var scheme = forked[i].getAttribute('data-scheme');
+          forked[i].setAttribute('media',
+            theme === 'auto' ? '(prefers-color-scheme: ' + scheme + ')'
+                             : (theme === scheme ? 'all' : 'not all'));
+        }
+        // The hero videos are swapped by CSS display, and the script at the
+        // end of the page picks which file to fetch from that. A manual
+        // override never touches prefers-color-scheme, so its own media query
+        // listener would never hear about this.
+        document.dispatchEvent(new CustomEvent('pensieve:theme', { detail: theme }));
+      }
+
+      paint();   // only the two metas exist this early; the sources follow below
+
+      // Called again from inside the body the moment a batch of [data-scheme]
+      // sources has been parsed. DOMContentLoaded on its own is too late: an
+      // override that disagrees with the system leaves the browser resolving
+      // each <picture> against prefers-color-scheme, so it picks — and starts
+      // fetching — the wrong file, then swaps once the media attributes are
+      // rewritten. That is a discarded download and exactly the one-theme-
+      // then-the-other flash the note at the top promises not to do.
+      window.pensievePaint = paint;
+
+      document.addEventListener('DOMContentLoaded', function () {
+        paint();
+        var btn = document.querySelector('.theme-toggle');
+        if (!btn) return;
+        // The word is the state, and the label says what a press will do —
+        // the control has three positions, so "toggle" would be a lie.
+        function label() {
+          btn.textContent = theme;
+          var name = 'theme: ' + theme + (theme === 'auto' ? ' (follows your system)' : '') +
+                     '. switch to ' + NEXT[theme] + '.';
+          btn.setAttribute('aria-label', name);
+          btn.setAttribute('title', name);
+        }
+        label();
+        btn.addEventListener('click', function () {
+          theme = NEXT[theme];
+          try { localStorage.setItem(KEY, theme); } catch (e) {}
+          paint();
+          label();
+        });
+      });
+    })();
+  </script>
 
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://theanhgen.github.io/pensieve-site/">
@@ -27,6 +100,66 @@
 
   <link rel="stylesheet" href="style.css">
   <script>document.documentElement.classList.add('js');</script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    "name": "pensieve",
+    "operatingSystem": "iOS 17+",
+    "applicationCategory": "LifestyleApplication",
+    "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
+    "description": "a journaling app that forgets on purpose. write a thought, watch it fade, let it go.",
+    "url": "https://theanhgen.github.io/pensieve-site/"
+  }
+  </script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "how long do notes last?",
+        "acceptedAnswer": { "@type": "Answer", "text": "a week by default. you can change that in Settings, or extend a single note from its menu. pin a note and it won’t fade until you unpin it." }
+      },
+      {
+        "@type": "Question",
+        "name": "can i get a note back after it fades?",
+        "acceptedAnswer": { "@type": "Answer", "text": "no. when a note fades on its own it’s gone for good, that’s the whole point. notes you delete by hand sit in Trash for 30 days first, in case you change your mind." }
+      },
+      {
+        "@type": "Question",
+        "name": "is there a subscription or cost?",
+        "acceptedAnswer": { "@type": "Answer", "text": "pensieve is free. an optional supporter purchase unlocks never, an extra option when you release a note: those notes stay until you delete them, rather than being paused the way a pin is. everything else is free, with no ads and nothing to sign up for." }
+      },
+      {
+        "@type": "Question",
+        "name": "what does pinning a note do?",
+        "acceptedAnswer": { "@type": "Answer", "text": "pinning is free, and it’s a pause rather than a decision: a pinned note stops fading until you unpin it, then carries on. use it for things you need a bit longer but not forever." }
+      },
+      {
+        "@type": "Question",
+        "name": "can i edit a note?",
+        "acceptedAnswer": { "@type": "Answer", "text": "no. a note stays what you wrote when you wrote it. you can copy it, extend it, pin it, or delete it." }
+      },
+      {
+        "@type": "Question",
+        "name": "does pensieve sync across my devices?",
+        "acceptedAnswer": { "@type": "Answer", "text": "only if you ask it to. iCloud sync is off by default. turn it on and your notes sync across your own Apple devices through your private iCloud, never through a server of ours." }
+      },
+      {
+        "@type": "Question",
+        "name": "does it work on iPad or Mac?",
+        "acceptedAnswer": { "@type": "Answer", "text": "iPhone only for now." }
+      },
+      {
+        "@type": "Question",
+        "name": "what iOS version does it need?",
+        "acceptedAnswer": { "@type": "Answer", "text": "iOS 17 or later." }
+      }
+    ]
+  }
+  </script>
 </head>
 <body>
 
@@ -35,7 +168,14 @@
   <nav class="nav" aria-label="Primary">
     <div class="wrap">
       <span class="nav-wordmark">pensieve</span>
-      <a href="#faq" class="nav-link">FAQ</a>
+      <div class="nav-actions">
+        <a href="#faq" class="nav-link">FAQ</a>
+        <!-- Cycles auto → light → dark. Hidden until the head script has set
+             data-theme: with no JS it would cycle nothing, and the page
+             follows the system on its own anyway. -->
+        <button class="theme-toggle" type="button"
+                aria-label="theme: auto (follows your system). switch to light.">auto</button>
+      </div>
     </div>
   </nav>
 
@@ -48,14 +188,22 @@
       <div class="wrap hero-grid">
         <div class="hero-copy">
           <picture data-reveal style="--d:0ms">
-            <source srcset="icon-dark.png" media="(prefers-color-scheme: dark)">
+            <source srcset="icon-dark.png" media="(prefers-color-scheme: dark)" data-scheme="dark">
             <img src="icon.png" alt="pensieve app icon" class="app-icon-img" width="112" height="112">
           </picture>
-          <h1 class="hero-title" data-reveal style="--d:40ms">a week,<br>then gone.</h1>
+          <script>pensievePaint();</script>   <!-- the source above is parsed; fix its media before the browser fetches it -->
+          <h1 class="hero-title" data-reveal style="--d:40ms">a week,<br>then gone.
+            <span class="visually-hidden">— pensieve, a journaling app where notes fade and disappear</span>
+          </h1>
           <p class="hero-sub" data-reveal style="--d:80ms">notes that fade on their own, so you never have to tidy up after yourself.</p>
           <div class="hero-cta" data-reveal style="--d:120ms">
             <img src="appstore-badge.svg" alt="Download on the App Store" class="appstore-badge" width="146" height="48">
             <span class="hero-cta-note">coming soon</span>
+            <!-- The only way a pre-launch reader can hear about launch. A
+                 mailto, not a form: no field, no script, no third-party
+                 endpoint, so the page fires no request it doesn't already
+                 make and the no-tracking claim above stays literally true. -->
+            <a class="cta-mailto" href="mailto:bibybi@icloud.com?subject=pensieve%20launch">email me when it’s live →</a>
           </div>
           <!-- The three objections a visitor has before they read anything else.
                Every one is verifiable: free app, no sign-up, no analytics SDK
@@ -68,26 +216,47 @@
             <!-- Shadow underlay: Safari won't render a filter on any ancestor
                  of a <video>, so the silhouette drop-shadow lives on this
                  duplicate bezel img instead (see .phone-shadow in style.css). -->
-            <img src="screenshots/bezel.png" class="phone-shadow" alt="" aria-hidden="true">
+            <picture>
+              <source srcset="screenshots/bezel.webp" type="image/webp">
+              <img src="screenshots/bezel.png" class="phone-shadow" alt="" aria-hidden="true">
+            </picture>
             <div class="phone-screen">
               <!-- Both themes stay in the DOM so the correct POSTER shows without
                    JS, but neither preloads and neither autoplays: `display: none`
                    does not stop a preload=auto video downloading, so every
                    visitor was pulling both files and watching one. The script at
                    the end of the page starts whichever is actually visible. -->
+              <!-- The poster attribute takes one URL and has no <source> to fall
+                   back to, so it is webp flat: the frame this page already needs
+                   (aspect-ratio, clip-path) rules out every browser that cannot
+                   decode one. The fallback <picture> below has to name the same
+                   webp or nothing is saved — a <video>'s fallback content is
+                   never RENDERED by a browser that plays video, but the <img>
+                   inside it is still in the DOM and still fetched, which is how
+                   both poster PNGs kept downloading. Same URL twice now, so it
+                   is one 56 KB fetch for the pair instead of 431 KB. -->
               <video class="device-shot device-shot--dark" muted loop playsinline preload="none"
-                     poster="screenshots/poster-dark.png" width="800" height="1739"
+                     poster="screenshots/poster-dark.webp" width="800" height="1739"
                      data-hero="screenshots/hero-dark.mp4"
                      aria-label="The pensieve notes list, with older notes fading toward transparency over time">
-                <img src="screenshots/poster-dark.png" class="device-shot" alt="The pensieve notes list, with older notes fading toward transparency">
+                <picture>
+                  <source srcset="screenshots/poster-dark.webp" type="image/webp">
+                  <img src="screenshots/poster-dark.png" class="device-shot" alt="The pensieve notes list, with older notes fading toward transparency">
+                </picture>
               </video>
               <video class="device-shot device-shot--light" muted loop playsinline preload="none"
-                     poster="screenshots/poster-light.png" width="800" height="1739" aria-hidden="true"
+                     poster="screenshots/poster-light.webp" width="800" height="1739" aria-hidden="true"
                      data-hero="screenshots/hero-light.mp4">
-                <img src="screenshots/poster-light.png" class="device-shot" alt="">
+                <picture>
+                  <source srcset="screenshots/poster-light.webp" type="image/webp">
+                  <img src="screenshots/poster-light.png" class="device-shot" alt="">
+                </picture>
               </video>
             </div>
-            <img src="screenshots/bezel.png" class="phone-bezel" alt="" aria-hidden="true">
+            <picture>
+              <source srcset="screenshots/bezel.webp" type="image/webp">
+              <img src="screenshots/bezel.png" class="phone-bezel" alt="" aria-hidden="true">
+            </picture>
           </div>
         </div>
       </div>
@@ -103,12 +272,17 @@
           <div class="phone-frame phone-frame--small">
             <div class="phone-screen">
               <picture>
-                <source srcset="screenshots/write-dark.png" media="(prefers-color-scheme: dark)">
+                <source srcset="screenshots/write-dark.webp" type="image/webp" media="(prefers-color-scheme: dark)" data-scheme="dark">
+                <source srcset="screenshots/write-dark.png" media="(prefers-color-scheme: dark)" data-scheme="dark">
+                <source srcset="screenshots/write-light.webp" type="image/webp">
                 <img src="screenshots/write-light.png" class="device-shot" width="800" height="1739"
                      alt="The pensieve capture bar with a thought being written">
               </picture>
             </div>
-            <img src="screenshots/bezel.png" class="phone-bezel" alt="" aria-hidden="true">
+            <picture>
+              <source srcset="screenshots/bezel.webp" type="image/webp">
+              <img src="screenshots/bezel.png" class="phone-bezel" alt="" aria-hidden="true">
+            </picture>
           </div>
         </div>
         <div class="mechanic-step mechanic-step--with-screen" data-reveal style="--d:40ms">
@@ -118,12 +292,17 @@
           <div class="phone-frame phone-frame--small">
             <div class="phone-screen">
               <picture>
-                <source srcset="screenshots/notes-dark.png" media="(prefers-color-scheme: dark)">
+                <source srcset="screenshots/notes-dark.webp" type="image/webp" media="(prefers-color-scheme: dark)" data-scheme="dark">
+                <source srcset="screenshots/notes-dark.png" media="(prefers-color-scheme: dark)" data-scheme="dark">
+                <source srcset="screenshots/notes-light.webp" type="image/webp">
                 <img src="screenshots/notes-light.png" class="device-shot" width="800" height="1739"
                      alt="The pensieve notes list, with older notes fading toward transparency">
               </picture>
             </div>
-            <img src="screenshots/bezel.png" class="phone-bezel" alt="" aria-hidden="true">
+            <picture>
+              <source srcset="screenshots/bezel.webp" type="image/webp">
+              <img src="screenshots/bezel.png" class="phone-bezel" alt="" aria-hidden="true">
+            </picture>
           </div>
         </div>
         <div class="mechanic-step mechanic-step--with-screen" data-reveal style="--d:80ms">
@@ -133,12 +312,52 @@
           <div class="phone-frame phone-frame--small">
             <div class="phone-screen">
               <picture>
-                <source srcset="screenshots/empty-dark.png" media="(prefers-color-scheme: dark)">
+                <source srcset="screenshots/empty-dark.webp" type="image/webp" media="(prefers-color-scheme: dark)" data-scheme="dark">
+                <source srcset="screenshots/empty-dark.png" media="(prefers-color-scheme: dark)" data-scheme="dark">
+                <source srcset="screenshots/empty-light.webp" type="image/webp">
                 <img src="screenshots/empty-light.png" class="device-shot" width="800" height="1739"
                      alt="The pensieve empty state after a note is released, reading “Nothing left to carry.”">
               </picture>
             </div>
-            <img src="screenshots/bezel.png" class="phone-bezel" alt="" aria-hidden="true">
+            <picture>
+              <source srcset="screenshots/bezel.webp" type="image/webp">
+              <img src="screenshots/bezel.png" class="phone-bezel" alt="" aria-hidden="true">
+            </picture>
+          </div>
+        </div>
+      </div>
+      <script>pensievePaint();</script>   <!-- same again for the six sources above -->
+    </section>
+
+    <!-- The one place on the page where the reader's own words fade. Every part
+         of it runs in the tab: no storage, no fetch, no third-party script,
+         which is what lets the line under the input say so plainly. The note
+         body is written with textContent, so pasted markup stays text.
+         Hidden without JS — the form would otherwise be a button that reloads
+         the page. -->
+    <section class="demo" id="try">
+      <div class="wrap">
+        <div class="demo-header" data-reveal>
+          <h2>watch one go.</h2>
+          <p>type a thought and leave it. it fades over about twenty seconds here — in the app you’d have a week.</p>
+        </div>
+
+        <div class="demo-stage">
+          <form class="demo-form" id="demo-form" data-reveal style="--d:0ms">
+            <label class="visually-hidden" for="demo-input">type a thought</label>
+            <input class="demo-input" id="demo-input" type="text" placeholder="type a thought…"
+                   autocomplete="off" maxlength="140" enterkeyhint="done">
+            <button class="demo-submit" type="submit">release</button>
+          </form>
+
+          <p class="demo-privacy" data-reveal style="--d:40ms">nothing you type here leaves your browser — not stored, not sent, no third parties.</p>
+
+          <!-- Same card, same 3px bar, same type as the widget mockups below:
+               what fades here is meant to read as the same object. -->
+          <div class="app-widget demo-panel is-empty" id="demo-panel" data-reveal style="--d:80ms">
+            <span class="app-widget-label">fading</span>
+            <div class="demo-list" id="demo-list" aria-live="polite"></div>
+            <p class="demo-empty">nothing here yet.</p>
           </div>
         </div>
       </div>
@@ -278,6 +497,12 @@
     <section class="privacy">
       <div class="wrap" data-reveal>
         <p><strong>private by design.</strong><br>your notes live on your device. turn on iCloud sync and they travel through your own private iCloud, never through us.</p>
+        <!-- Pricing used to exist only inside FAQ answer #faq-a3, behind a
+             closed accordion, so a visitor could read the whole page without
+             learning the app is free. This line is a compression of that
+             answer and links to it, so drift between the two is one click to
+             spot. Set a step quieter than the promise above it. -->
+        <p class="privacy-price">free. an optional supporter purchase unlocks <a href="#faq-a3"><em>never</em></a> — notes that stay.</p>
         <a href="privacy.html" class="privacy-link">read the privacy policy →</a>
       </div>
     </section>
@@ -304,9 +529,9 @@
           </div>
           <div class="faq-item" data-reveal style="--d:80ms">
             <h3 class="faq-heading">
-              <button class="faq-question" aria-expanded="false" aria-controls="faq-a5">is there a subscription or cost?</button>
+              <button class="faq-question" aria-expanded="false" aria-controls="faq-a3">is there a subscription or cost?</button>
             </h3>
-            <div class="faq-answer" id="faq-a5"><div class="faq-answer-inner">
+            <div class="faq-answer" id="faq-a3"><div class="faq-answer-inner">
               <p>pensieve is free. an optional supporter purchase unlocks <em>never</em>, an extra option when you release a note: those notes stay until you delete them, rather than being paused the way a pin is. everything else is free, with no ads and nothing to sign up for.</p>
             </div></div>
           </div>
@@ -320,33 +545,33 @@
           </div>
           <div class="faq-item" data-reveal style="--d:160ms">
             <h3 class="faq-heading">
-              <button class="faq-question" aria-expanded="false" aria-controls="faq-a7">can i edit a note?</button>
+              <button class="faq-question" aria-expanded="false" aria-controls="faq-a5">can i edit a note?</button>
             </h3>
-            <div class="faq-answer" id="faq-a7"><div class="faq-answer-inner">
+            <div class="faq-answer" id="faq-a5"><div class="faq-answer-inner">
               <p>no. a note stays what you wrote when you wrote it. you can copy it, extend it, pin it, or delete it.</p>
             </div></div>
           </div>
           <div class="faq-item" data-reveal style="--d:200ms">
             <h3 class="faq-heading">
-              <button class="faq-question" aria-expanded="false" aria-controls="faq-a3">does pensieve sync across my devices?</button>
+              <button class="faq-question" aria-expanded="false" aria-controls="faq-a6">does pensieve sync across my devices?</button>
             </h3>
-            <div class="faq-answer" id="faq-a3"><div class="faq-answer-inner">
+            <div class="faq-answer" id="faq-a6"><div class="faq-answer-inner">
               <p>only if you ask it to. iCloud sync is off by default. turn it on and your notes sync across your own Apple devices through your private iCloud, never through a server of ours.</p>
             </div></div>
           </div>
           <div class="faq-item" data-reveal style="--d:240ms">
             <h3 class="faq-heading">
-              <button class="faq-question" aria-expanded="false" aria-controls="faq-a8">does it work on iPad or Mac?</button>
+              <button class="faq-question" aria-expanded="false" aria-controls="faq-a7">does it work on iPad or Mac?</button>
             </h3>
-            <div class="faq-answer" id="faq-a8"><div class="faq-answer-inner">
+            <div class="faq-answer" id="faq-a7"><div class="faq-answer-inner">
               <p>iPhone only for now.</p>
             </div></div>
           </div>
           <div class="faq-item" data-reveal style="--d:280ms">
             <h3 class="faq-heading">
-              <button class="faq-question" aria-expanded="false" aria-controls="faq-a6">what iOS version does it need?</button>
+              <button class="faq-question" aria-expanded="false" aria-controls="faq-a8">what iOS version does it need?</button>
             </h3>
-            <div class="faq-answer" id="faq-a6"><div class="faq-answer-inner">
+            <div class="faq-answer" id="faq-a8"><div class="faq-answer-inner">
               <p>iOS 17 or later.</p>
             </div></div>
           </div>
@@ -363,6 +588,7 @@
         <div class="closing-cta">
           <img src="appstore-badge.svg" alt="Download on the App Store" class="appstore-badge" width="146" height="48">
           <span class="hero-cta-note">coming soon</span>
+          <a class="cta-mailto" href="mailto:bibybi@icloud.com?subject=pensieve%20launch">email me when it’s live →</a>
         </div>
       </div>
     </section>
@@ -384,14 +610,37 @@
 
   <script>
     // FAQ accordion — grid-rows transition, no transitionend races.
+    // replaceState, never pushState: back should leave the page rather than
+    // walk the reader out through every toggle they made. Closing falls back
+    // to '#faq' — a bare '#' would jump the page to the top.
     document.querySelectorAll('.faq-question').forEach(btn => {
       const answer = document.getElementById(btn.getAttribute('aria-controls'));
       btn.addEventListener('click', () => {
         const open = btn.getAttribute('aria-expanded') === 'true';
         btn.setAttribute('aria-expanded', String(!open));
-        if (answer) answer.classList.toggle('is-open', !open);
+        if (answer) {
+          answer.classList.toggle('is-open', !open);
+          history.replaceState(null, '', open ? '#faq' : '#' + answer.id);
+        }
       });
     });
+
+    // Open the answer the URL points at. The page has other anchors (#faq,
+    // and whatever a reader pastes), so ignore anything that is not an
+    // answer. getElementById, not querySelector: an arbitrary hash can be an
+    // invalid selector and would throw instead of missing.
+    // Bound to hashchange too, not just load: the privacy section links to
+    // #faq-a3 from the same page, and a load-only handler would leave that
+    // click scrolling to a still-closed answer.
+    const openHashedAnswer = () => {
+      if (!location.hash) return;
+      const target = document.getElementById(location.hash.slice(1));
+      if (!target || !target.classList.contains('faq-answer')) return;
+      const btn = document.querySelector(`[aria-controls="${target.id}"]`);
+      if (btn && btn.getAttribute('aria-expanded') !== 'true') btn.click();
+    };
+    window.addEventListener('DOMContentLoaded', openHashedAnswer);
+    window.addEventListener('hashchange', openHashedAnswer);
 
     // Respect reduced motion: freeze the hero videos on their poster frame.
     const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -467,6 +716,9 @@
       start();
       var mq = window.matchMedia('(prefers-color-scheme: dark)');
       if (mq.addEventListener) mq.addEventListener('change', function () { setTimeout(start, 0); });
+      // The theme toggle never touches prefers-color-scheme, so the query
+      // above stays silent through an override — it announces itself instead.
+      document.addEventListener('pensieve:theme', function () { setTimeout(start, 0); });
 
       // Don't decode frames nobody can see. The hero used to loop for the whole
       // visit, including while the reader is all the way down in the FAQ.
@@ -478,6 +730,87 @@
           else heroes.forEach(function (v) { v.pause(); });
         }, { threshold: 0 }).observe(stage);
       }
+    })();
+  </script>
+  <script>
+    // Interactive fade demo. This is the whole implementation — there is no
+    // storage call, no fetch, no third-party anything in it, which is what the
+    // line under the input promises the reader.
+    (function () {
+      var form  = document.getElementById('demo-form');
+      var input = document.getElementById('demo-input');
+      var list  = document.getElementById('demo-list');
+      var panel = document.getElementById('demo-panel');
+      if (!form || !input || !list || !panel) return;
+
+      // Queried, not cached as a boolean: a reader can flip the setting
+      // mid-visit and the next note should honour whatever it says by then.
+      var motion = window.matchMedia('(prefers-reduced-motion: reduce)');
+
+      function syncEmpty() {
+        panel.classList.toggle('is-empty', list.childElementCount === 0);
+      }
+
+      // The fade ends at opacity 0 and holds there, so the ghost cannot simply
+      // be dropped inside the note: it would be painted fully transparent and
+      // nobody would ever see it. Cancel the animation first, then label it.
+      function release(note) {
+        if (note.dataset.released) return;
+        note.dataset.released = '1';
+        note.classList.add('is-released');
+        var ghost = document.createElement('span');
+        ghost.className = 'demo-released';
+        ghost.textContent = 'released.';
+        note.replaceChildren(ghost);
+        setTimeout(function () { note.remove(); syncEmpty(); }, 2000);
+      }
+
+      form.addEventListener('submit', function (e) {
+        e.preventDefault();
+        var text = input.value.trim();
+        if (!text) { input.focus(); return; }
+        input.value = '';
+
+        var note = document.createElement('div');
+        note.className = 'app-widget-note demo-note';
+
+        var bar = document.createElement('span');
+        bar.className = 'app-widget-bar';
+
+        var body = document.createElement('div');
+        body.className = 'app-widget-body';
+
+        var line = document.createElement('p');
+        line.className = 'app-widget-text';
+        line.textContent = text;              // textContent, never innerHTML
+
+        var time = document.createElement('span');
+        time.className = 'app-widget-time';
+        time.textContent = 'just now';
+
+        body.append(line, time);
+        note.append(bar, body);
+
+        // Named-animation guard: animationend bubbles, so any animation added
+        // to a child later would otherwise release the note early.
+        note.addEventListener('animationend', function (ev) {
+          if (ev.animationName === 'pensieve-fade') release(note);
+        });
+
+        list.prepend(note);
+
+        // A held-down Enter key should not grow the panel without bound. Ten is
+        // more than the real widget ever shows; past that the oldest just goes.
+        while (list.childElementCount > 10) list.lastElementChild.remove();
+        syncEmpty();
+
+        // Reduced motion: there is no fade to wait on — the CSS turned the
+        // animation off, so animationend never fires and this is the only path
+        // that ends the note. It is released outright instead.
+        if (motion.matches) release(note);
+
+        input.focus();
+      });
     })();
   </script>
 </body>

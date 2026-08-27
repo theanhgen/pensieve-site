@@ -9,8 +9,65 @@
   <link rel="canonical" href="https://theanhgen.github.io/pensieve-site/privacy.html">
   <link rel="icon" href="icon.png">
   <link rel="apple-touch-icon" href="icon.png">
-  <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
-  <meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)">
+  <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)" data-scheme="light">
+  <meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)" data-scheme="dark">
+
+  <!-- Theme. The same block as index.html, reading the same storage key, so a
+       choice made on one page holds on the other. Runs before the stylesheet
+       so data-theme is on <html> for the first paint. -->
+  <script>
+    (function () {
+      var KEY  = 'pensieve-theme';
+      var NEXT = { auto: 'light', light: 'dark', dark: 'auto' };
+      var root = document.documentElement;
+      var stored = null;
+      try { stored = localStorage.getItem(KEY); } catch (e) {}   // private mode throws
+      // Compared, not looked up: a stray value in storage must land on "auto"
+      // rather than on some inherited property name of the map above.
+      var theme = (stored === 'light' || stored === 'dark' || stored === 'auto') ? stored : 'auto';
+
+      // Everything a [data-theme] selector cannot reach. The media attribute
+      // on a theme-color meta is resolved by the BROWSER against the system
+      // setting and ignores data-theme entirely, so under an override each one
+      // is rewritten by hand to match all or nothing. Under "auto" they go
+      // back to asking the system themselves.
+      function paint() {
+        root.setAttribute('data-theme', theme);
+        var forked = document.querySelectorAll('[data-scheme]');
+        for (var i = 0; i < forked.length; i++) {
+          var scheme = forked[i].getAttribute('data-scheme');
+          forked[i].setAttribute('media',
+            theme === 'auto' ? '(prefers-color-scheme: ' + scheme + ')'
+                             : (theme === scheme ? 'all' : 'not all'));
+        }
+        document.dispatchEvent(new CustomEvent('pensieve:theme', { detail: theme }));
+      }
+
+      paint();
+
+      document.addEventListener('DOMContentLoaded', function () {
+        paint();
+        var btn = document.querySelector('.theme-toggle');
+        if (!btn) return;
+        // The word is the state, and the label says what a press will do —
+        // the control has three positions, so "toggle" would be a lie.
+        function label() {
+          btn.textContent = theme;
+          var name = 'theme: ' + theme + (theme === 'auto' ? ' (follows your system)' : '') +
+                     '. switch to ' + NEXT[theme] + '.';
+          btn.setAttribute('aria-label', name);
+          btn.setAttribute('title', name);
+        }
+        label();
+        btn.addEventListener('click', function () {
+          theme = NEXT[theme];
+          try { localStorage.setItem(KEY, theme); } catch (e) {}
+          paint();
+          label();
+        });
+      });
+    })();
+  </script>
 
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://theanhgen.github.io/pensieve-site/privacy.html">
@@ -107,7 +164,13 @@
   <nav class="nav" aria-label="Primary">
     <div class="wrap">
       <a href="index.html" class="nav-wordmark">pensieve</a>
-      <a href="index.html" class="nav-link">home</a>
+      <div class="nav-actions">
+        <a href="index.html" class="nav-link">home</a>
+        <!-- Cycles auto → light → dark, same control and same stored key as
+             the home page. Hidden until the head script has set data-theme. -->
+        <button class="theme-toggle" type="button"
+                aria-label="theme: auto (follows your system). switch to light.">auto</button>
+      </div>
     </div>
   </nav>
 
