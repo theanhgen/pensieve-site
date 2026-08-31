@@ -371,9 +371,19 @@ html[data-theme] .theme-toggle { display: inline-flex; }
    440pt-wide capture shown at 170px rendered the note text at ~6px. Cropped
    and bezel-free the same card fits a ~245px-wide image, which is what sets
    the text size — width, not the crop itself, is the whole mechanism. */
+/* The framed card image is cut off part way down the phone, so it has to run
+   to the card's bottom edge — stopped short by the card's own padding it reads
+   as a photo of a phone with its bottom sliced off, floating in a box, rather
+   than as a device carrying on past the card. The step's other padding stays. */
+.mechanic-step--with-screen { padding-bottom: 0; }
 .phone-frame--small {
   width: 100%;
-  margin-top: 4px;
+  /* auto, not a fixed gap: the three cards are stretched to a common height by
+     the grid, and this is a flex column, so the slack collects under the last
+     child. With a fixed top margin the phone stopped short of the card's floor
+     and read as a photo of a device with its bottom sliced off. Pushed down
+     instead, it runs off the card, which is the whole point of cutting it. */
+  margin-top: auto;
   aspect-ratio: auto;
   /* img-only subtree — Safari renders the filter here without complaint.
      Kept: without a shadow the flat crops look pasted onto the card. */
