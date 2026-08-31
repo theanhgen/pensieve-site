@@ -1,0 +1,36 @@
+# pensieve
+
+> An iOS app for notes that fade. You write something down, it expires on its
+> own, and there is nothing to tidy up afterwards. "for what you carry."
+
+pensieve is a journaling app that forgets on purpose. A note goes lighter as
+the days pass and is gone in a week by default. There is no archive and no
+search: once a note fades on its own it cannot be recovered, which is the
+point. Notes deleted by hand sit in Trash for 30 days first.
+
+- Platform: iPhone, iOS 17.0 or later. No iPad or Mac app.
+- Price: free, no ads, no account. An optional supporter purchase unlocks
+  "never", a note released that way stays until you delete it.
+- Pinning is free and pauses a note's fade until you unpin it. A single note
+  can also be extended from its menu.
+- Notes are stored on device. iCloud sync is off by default; turned on, notes
+  travel through the reader's own private iCloud and never through a server
+  belonging to pensieve. There is no server.
+- No analytics, no tracking, no sign-up.
+- Notes cannot be edited. A note stays what you wrote when you wrote it.
+- Widgets for the Home Screen, Lock Screen and Control Center, plus a share
+  sheet extension.
+
+## Pages
+
+- [Home](https://theanhgen.github.io/pensieve-site/): what the app does, how
+  fading works, and the FAQ.
+- [Why it forgets](https://theanhgen.github.io/pensieve-site/why.html): the
+  reasoning behind a notes app with no archive.
+- [Privacy policy](https://theanhgen.github.io/pensieve-site/privacy.html):
+  what is collected, which is nothing.
+
+## Status
+
+Not yet on the App Store. The site says "coming soon" and collects an email
+for launch. Any claim that it is downloadable today is wrong.

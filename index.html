@@ -35,13 +35,19 @@
       // an override each one is rewritten by hand to match all or nothing.
       // Under "auto" they go back to asking the system themselves.
       function paint() {
-        root.setAttribute('data-theme', theme);
+        if (root.getAttribute('data-theme') !== theme) root.setAttribute('data-theme', theme);
         var forked = document.querySelectorAll('[data-scheme]');
         for (var i = 0; i < forked.length; i++) {
           var scheme = forked[i].getAttribute('data-scheme');
-          forked[i].setAttribute('media',
-            theme === 'auto' ? '(prefers-color-scheme: ' + scheme + ')'
-                             : (theme === scheme ? 'all' : 'not all'));
+          var want = theme === 'auto' ? '(prefers-color-scheme: ' + scheme + ')'
+                                      : (theme === scheme ? 'all' : 'not all');
+          // Compared before writing. paint() runs three times on a cold load
+          // (here, mid-body, DOMContentLoaded) and on the default "auto" every
+          // one of those writes the value that is already there — but setting
+          // media on a <source> re-runs the browser's source selection for the
+          // whole <picture> and invalidates style for it. Three needless passes
+          // over fifteen sources is main-thread time spent to change nothing.
+          if (forked[i].getAttribute('media') !== want) forked[i].setAttribute('media', want);
         }
         // The hero videos are swapped by CSS display, and the script at the
         // end of the page picks which file to fetch from that. A manual
@@ -100,83 +106,177 @@
   <meta property="og:url" content="https://theanhgen.github.io/pensieve-site/">
   <meta property="og:title" content="pensieve, for what you carry.">
   <meta property="og:description" content="a journaling app that forgets on purpose. write a thought, watch it fade, let it go.">
-  <meta property="og:image" content="https://theanhgen.github.io/pensieve-site/icon.png">
-  <meta property="og:image:width" content="1024">
-  <meta property="og:image:height" content="1024">
-  <meta property="og:image:alt" content="The pensieve app icon">
-  <meta name="twitter:card" content="summary">
+  <meta property="og:image" content="https://theanhgen.github.io/pensieve-site/og.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="pensieve: a week, then gone. a journaling app where notes fade and disappear.">
+  <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="pensieve, for what you carry.">
   <meta name="twitter:description" content="a journaling app that forgets on purpose.">
-  <meta name="twitter:image" content="https://theanhgen.github.io/pensieve-site/icon.png">
+  <meta name="twitter:image" content="https://theanhgen.github.io/pensieve-site/og.png">
+  <meta name="twitter:image:alt" content="pensieve: a week, then gone. a journaling app where notes fade and disappear.">
 
   <link rel="stylesheet" href="style.css">
   <script>document.documentElement.classList.add('js');</script>
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
-    "@type": "SoftwareApplication",
-    "name": "pensieve",
-    "operatingSystem": "iOS 17+",
-    "applicationCategory": "LifestyleApplication",
-    "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
-    "description": "a journaling app that forgets on purpose. write a thought, watch it fade, let it go.",
-    "url": "https://theanhgen.github.io/pensieve-site/",
-    "author": {
-      "@type": "Person",
-      "name": "nguyen the anh",
-      "url": "https://theanhgen.github.io/pensieve-site/why.html"
-    },
-    "creator": {
-      "@type": "Person",
-      "name": "nguyen the anh",
-      "url": "https://theanhgen.github.io/pensieve-site/why.html"
-    }
-  }
-  </script>
-  <script type="application/ld+json">
-  {
-    "@context": "https://schema.org",
-    "@type": "FAQPage",
-    "mainEntity": [
+    "@graph": [
       {
-        "@type": "Question",
-        "name": "how long do notes last?",
-        "acceptedAnswer": { "@type": "Answer", "text": "a week by default. you can change that in Settings, or extend a single note from its menu. pin a note and it won’t fade until you unpin it." }
+        "@type": "WebSite",
+        "@id": "https://theanhgen.github.io/pensieve-site/#website",
+        "url": "https://theanhgen.github.io/pensieve-site/",
+        "name": "pensieve",
+        "inLanguage": "en",
+        "description": "a journaling app that forgets on purpose. write a thought, watch it fade, let it go.",
+        "publisher": {
+          "@id": "https://theanhgen.github.io/pensieve-site/#person"
+        }
       },
       {
-        "@type": "Question",
-        "name": "can i get a note back after it fades?",
-        "acceptedAnswer": { "@type": "Answer", "text": "no. when a note fades on its own it’s gone for good, that’s the whole point. notes you delete by hand sit in Trash for 30 days first, in case you change your mind." }
+        "@type": "Person",
+        "@id": "https://theanhgen.github.io/pensieve-site/#person",
+        "name": "nguyen the anh",
+        "url": "https://theanhgen.github.io/pensieve-site/why.html"
       },
       {
-        "@type": "Question",
-        "name": "is there a subscription or cost?",
-        "acceptedAnswer": { "@type": "Answer", "text": "pensieve is free, with no ads and nothing to sign up for. an optional supporter purchase unlocks never: a note released that way stays until you delete it, rather than being paused the way a pin is." }
+        "@type": "SoftwareApplication",
+        "@id": "https://theanhgen.github.io/pensieve-site/#app",
+        "name": "pensieve",
+        "description": "a journaling app that forgets on purpose. notes fade on their own and are gone in a week by default, with no archive and no search.",
+        "url": "https://theanhgen.github.io/pensieve-site/",
+        "applicationCategory": "LifestyleApplication",
+        "applicationSubCategory": "Note-taking",
+        "operatingSystem": "iOS 17.0 or later",
+        "softwareVersion": "1.0",
+        "isAccessibleForFree": true,
+        "offers": {
+          "@type": "Offer",
+          "price": "0",
+          "priceCurrency": "USD"
+        },
+        "featureList": [
+          "notes fade on their own and are gone in a week by default",
+          "no archive and no search",
+          "pin a note to pause its fade, or extend a single note",
+          "no account, no ads and no analytics",
+          "notes stay on device; iCloud sync is off by default",
+          "Home Screen, Lock Screen and Control Center widgets",
+          "share sheet extension for capturing from other apps"
+        ],
+        "screenshot": [
+          "https://theanhgen.github.io/pensieve-site/screenshots/write-light.png",
+          "https://theanhgen.github.io/pensieve-site/screenshots/fade-light.png",
+          "https://theanhgen.github.io/pensieve-site/screenshots/empty-light.png"
+        ],
+        "author": {
+          "@id": "https://theanhgen.github.io/pensieve-site/#person"
+        },
+        "creator": {
+          "@id": "https://theanhgen.github.io/pensieve-site/#person"
+        },
+        "publisher": {
+          "@id": "https://theanhgen.github.io/pensieve-site/#person"
+        }
       },
       {
-        "@type": "Question",
-        "name": "what does pinning a note do?",
-        "acceptedAnswer": { "@type": "Answer", "text": "pinning is free, and it’s a pause rather than a decision: a pinned note stops fading until you unpin it, then carries on. use it for things you need a bit longer but not forever." }
+        "@type": "WebPage",
+        "@id": "https://theanhgen.github.io/pensieve-site/#webpage",
+        "url": "https://theanhgen.github.io/pensieve-site/",
+        "name": "pensieve, for what you carry.",
+        "description": "write a thought. watch it fade. let it go. pensieve is a journaling app that forgets on purpose.",
+        "isPartOf": {
+          "@id": "https://theanhgen.github.io/pensieve-site/#website"
+        },
+        "about": {
+          "@id": "https://theanhgen.github.io/pensieve-site/#app"
+        },
+        "inLanguage": "en",
+        "primaryImageOfPage": {
+          "@type": "ImageObject",
+          "url": "https://theanhgen.github.io/pensieve-site/og.png",
+          "width": 1200,
+          "height": 630
+        },
+        "dateModified": "2026-08-31"
       },
       {
-        "@type": "Question",
-        "name": "can i edit a note?",
-        "acceptedAnswer": { "@type": "Answer", "text": "no. a note stays what you wrote when you wrote it. you can copy it, extend it, pin it, or delete it." }
-      },
-      {
-        "@type": "Question",
-        "name": "does pensieve sync across my devices?",
-        "acceptedAnswer": { "@type": "Answer", "text": "only if you ask it to. iCloud sync is off by default. turn it on and your notes sync across your own Apple devices through your private iCloud, never through a server of ours." }
-      },
-      {
-        "@type": "Question",
-        "name": "does it work on iPad or Mac?",
-        "acceptedAnswer": { "@type": "Answer", "text": "iPhone only for now." }
-      },
-      {
-        "@type": "Question",
-        "name": "what iOS version does it need?",
-        "acceptedAnswer": { "@type": "Answer", "text": "iOS 17 or later." }
+        "@type": "FAQPage",
+        "@id": "https://theanhgen.github.io/pensieve-site/#faq",
+        "url": "https://theanhgen.github.io/pensieve-site/#faq",
+        "isPartOf": {
+          "@id": "https://theanhgen.github.io/pensieve-site/#website"
+        },
+        "about": {
+          "@id": "https://theanhgen.github.io/pensieve-site/#app"
+        },
+        "inLanguage": "en",
+        "mainEntity": [
+          {
+            "@type": "Question",
+            "name": "how long do notes last?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "a week by default. you can change that in Settings, or extend a single note from its menu. pin a note and it won’t fade until you unpin it."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "can i get a note back after it fades?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "no. when a note fades on its own it’s gone for good, that’s the whole point. notes you delete by hand sit in Trash for 30 days first, in case you change your mind."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "is there a subscription or cost?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "pensieve is free, with no ads and nothing to sign up for. an optional supporter purchase unlocks never: a note released that way stays until you delete it, rather than being paused the way a pin is."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "what does pinning a note do?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "pinning is free, and it’s a pause rather than a decision: a pinned note stops fading until you unpin it, then carries on. use it for things you need a bit longer but not forever."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "can i edit a note?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "no. a note stays what you wrote when you wrote it. you can copy it, extend it, pin it, or delete it."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "does pensieve sync across my devices?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "only if you ask it to. iCloud sync is off by default. turn it on and your notes sync across your own Apple devices through your private iCloud, never through a server of ours."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "does it work on iPad or Mac?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "iPhone only for now."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "what iOS version does it need?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "iOS 17 or later."
+            }
+          }
+        ]
       }
     ]
   }
@@ -210,7 +310,7 @@
         <div class="hero-copy">
           <picture data-reveal style="--d:0ms">
             <source srcset="icon-dark.png" media="(prefers-color-scheme: dark)" data-scheme="dark">
-            <img src="icon.png" alt="pensieve app icon" class="app-icon-img" width="112" height="112">
+            <img src="icon.png" alt="pensieve app icon" class="app-icon-img" width="112" height="112" decoding="async">
           </picture>
           <script>pensievePaint();</script>   <!-- the source above is parsed; fix its media before it is RENDERED (the scanner has already queued it) -->
           <h1 class="hero-title" data-reveal style="--d:40ms">a week,<br>then gone.
@@ -218,7 +318,7 @@
           </h1>
           <p class="hero-sub" data-reveal style="--d:80ms">notes fade on their own. nothing to file, nothing to tidy up later.</p>
           <div class="hero-cta" data-reveal style="--d:120ms">
-            <img src="appstore-badge.svg" alt="Download on the App Store" class="appstore-badge" width="146" height="48">
+            <img src="appstore-badge.svg" alt="Download on the App Store" class="appstore-badge" width="146" height="48" decoding="async">
             <span class="hero-cta-note">coming soon</span>
             <!-- The only way a pre-launch reader can hear about launch. A
                  mailto, not a form: no field, no script, no third-party
@@ -239,7 +339,7 @@
                  duplicate bezel img instead (see .phone-shadow in style.css). -->
             <picture>
               <source srcset="screenshots/bezel.webp" type="image/webp">
-              <img src="screenshots/bezel.png" class="phone-shadow" alt="" aria-hidden="true">
+              <img src="screenshots/bezel.png" class="phone-shadow" alt="" aria-hidden="true" decoding="async">
             </picture>
             <div class="phone-screen">
               <!-- Both themes stay in the DOM so the correct POSTER shows without
@@ -276,7 +376,7 @@
             </div>
             <picture>
               <source srcset="screenshots/bezel.webp" type="image/webp">
-              <img src="screenshots/bezel.png" class="phone-bezel" alt="" aria-hidden="true">
+              <img src="screenshots/bezel.png" class="phone-bezel" alt="" aria-hidden="true" decoding="async">
             </picture>
           </div>
         </div>
@@ -296,7 +396,7 @@
                 <source srcset="screenshots/write-dark.webp" type="image/webp" media="(prefers-color-scheme: dark)" data-scheme="dark">
                 <source srcset="screenshots/write-dark.png" media="(prefers-color-scheme: dark)" data-scheme="dark">
                 <source srcset="screenshots/write-light.webp" type="image/webp">
-                <img src="screenshots/write-light.png" class="device-shot" width="800" height="945"
+                <img src="screenshots/write-light.png" class="device-shot" width="800" height="945" loading="lazy" decoding="async"
                      alt="The pensieve capture bar with a thought being written">
               </picture>
             </div>
@@ -312,7 +412,7 @@
                 <source srcset="screenshots/fade-dark.webp" type="image/webp" media="(prefers-color-scheme: dark)" data-scheme="dark">
                 <source srcset="screenshots/fade-dark.png" media="(prefers-color-scheme: dark)" data-scheme="dark">
                 <source srcset="screenshots/fade-light.webp" type="image/webp">
-                <img src="screenshots/fade-light.png" class="device-shot" width="800" height="1400"
+                <img src="screenshots/fade-light.png" class="device-shot" width="800" height="1400" loading="lazy" decoding="async"
                      alt="The pensieve notes list, with older notes fading toward transparency">
               </picture>
             </div>
@@ -328,7 +428,7 @@
                 <source srcset="screenshots/empty-dark.webp" type="image/webp" media="(prefers-color-scheme: dark)" data-scheme="dark">
                 <source srcset="screenshots/empty-dark.png" media="(prefers-color-scheme: dark)" data-scheme="dark">
                 <source srcset="screenshots/empty-light.webp" type="image/webp">
-                <img src="screenshots/empty-light.png" class="device-shot" width="800" height="945"
+                <img src="screenshots/empty-light.png" class="device-shot" width="800" height="945" loading="lazy" decoding="async"
                      alt="The pensieve empty state after a note is released, reading “Nothing left to carry.”">
               </picture>
             </div>
@@ -595,7 +695,7 @@
       <div class="wrap" data-reveal>
         <p class="closing-line">a week is usually enough. or rather it isn’t, and you pin the one that matters.</p>
         <div class="closing-cta">
-          <img src="appstore-badge.svg" alt="Download on the App Store" class="appstore-badge" width="146" height="48">
+          <img src="appstore-badge.svg" alt="Download on the App Store" class="appstore-badge" width="146" height="48" decoding="async">
           <span class="hero-cta-note">coming soon</span>
           <a class="cta-mailto" href="mailto:bibybi@icloud.com?subject=pensieve%20launch">email me when it’s live →</a>
         </div>

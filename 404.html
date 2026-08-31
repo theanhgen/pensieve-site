@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>gone. — pensieve</title>
+  <meta name="robots" content="noindex">
+  <link rel="icon" href="/pensieve-site/icon.png">
+
+  <!-- Self-contained on purpose. GitHub Pages serves this file for a miss at
+       ANY depth, so a relative stylesheet href would resolve against a path
+       that does not exist. Absolute links for the assets, and the handful of
+       rules the page needs inline rather than a second request that might
+       itself 404. The palette is the dark theme's from style.css, with the
+       light values under a media query — the three-state toggle lives on the
+       real pages and is not worth shipping to a dead end. -->
+  <style>
+    :root {
+      --bg: #000000; --ink: #f5f5f7; --muted: #86868b; --accent: #b09070;
+      --font: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", system-ui, sans-serif;
+      color-scheme: light dark;
+    }
+    @media (prefers-color-scheme: light) {
+      :root { --bg: #ffffff; --ink: #1d1d1f; --muted: #6e6e73; --accent: #744f34; }
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      min-height: 100vh; display: flex; align-items: center; justify-content: center;
+      padding: 2rem; background: var(--bg); color: var(--ink);
+      font-family: var(--font); -webkit-font-smoothing: antialiased;
+    }
+    main { max-width: 32rem; text-align: center; }
+    img { width: 72px; height: 72px; border-radius: 16px; margin-bottom: 2rem; }
+    h1 { font-size: clamp(2.5rem, 8vw, 3.75rem); font-weight: 600; letter-spacing: -0.035em; line-height: 1.05; }
+    p { margin-top: 1rem; font-size: 1.0625rem; line-height: 1.5; color: var(--muted); text-wrap: pretty; }
+    nav { margin-top: 2.5rem; display: flex; gap: 1.5rem; justify-content: center; flex-wrap: wrap; font-size: 0.9375rem; }
+    a { color: var(--accent); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    a:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 4px; }
+  </style>
+</head>
+<body>
+  <main>
+    <img src="/pensieve-site/icon.png" alt="" width="72" height="72" decoding="async">
+    <h1>gone.</h1>
+    <p>this page isn’t here. which, for this app, is either a bug or the feature working early.</p>
+    <nav>
+      <a href="/pensieve-site/">home</a>
+      <a href="/pensieve-site/why.html">why</a>
+      <a href="/pensieve-site/privacy.html">privacy</a>
+    </nav>
+  </main>
+</body>
+</html>

@@ -1231,3 +1231,21 @@ html.js .faq-answer.is-open {
     --rule:  #8e8e93;
   }
 }
+
+/* ─ below-the-fold rendering ──────────────────────────────── */
+/* Everything under the hero is laid out and painted only once it comes near
+   the viewport. The page is ~4900px tall and the browser was doing the whole
+   thing in one commit during load — a single main-thread task big enough to
+   count as blocking on a slow device, spent on eight sections nobody has
+   scrolled to yet.
+   `auto` on contain-intrinsic-size, not a bare length: the browser remembers
+   each section's real height after it renders once, so the scrollbar stops
+   moving under the reader on the way down. The placeholder heights are rough
+   on purpose — they only have to be close enough that an unrendered section
+   doesn't collapse.
+   Not applied to .hero: it is on screen at load, so skipping it would cost a
+   frame rather than save one. */
+.mechanic, .demo, .features, .widgets, .privacy, .faq, .closing, .footer {
+  content-visibility: auto;
+  contain-intrinsic-size: auto 900px;
+}
