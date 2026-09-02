@@ -290,7 +290,12 @@ html[data-theme] .theme-toggle { display: inline-flex; }
    corners the bezel itself is opaque and masks the video's square edges. */
 .phone-frame {
   position: relative;
-  width: 264px;
+  /* min(), not a flat 320px: the hero column is the full viewport width once
+     the grid stacks, and at 390px a 320px frame plus the section's 1.5rem
+     gutters pushed the page into a sideways scroll. Capped by the column
+     instead, the phone is 320px wherever there is room for it and shrinks with
+     the screen where there isn't. */
+  width: min(320px, 100%);
   aspect-ratio: 1470 / 3000;
   flex-shrink: 0;
 }
