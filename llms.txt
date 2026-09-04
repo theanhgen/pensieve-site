@@ -11,8 +11,9 @@ point. Notes deleted by hand sit in Trash for 30 days first.
 - Platform: iPhone, iOS 17.0 or later. No iPad or Mac app.
 - Price: free, no ads, no account. An optional supporter purchase unlocks
   "never", a note released that way stays until you delete it.
-- Pinning is free and pauses a note's fade until you unpin it. A single note
-  can also be extended from its menu.
+- Pinning is free and pauses a note's fade until you unpin it. Unpinning starts
+  the note's full window again from now, rather than resuming the time the note
+  had left. A single note can also be extended from its menu.
 - Notes are stored on device. iCloud sync is off by default; turned on, notes
   travel through the reader's own private iCloud and never through a server
   belonging to pensieve. There is no server.
