@@ -29,6 +29,24 @@
       // rather than on some inherited property name of the map above.
       var theme = (stored === 'light' || stored === 'dark' || stored === 'auto') ? stored : 'auto';
 
+      // The theme-color metas get their colour rewritten as well as their
+      // media. Under a dark override on a light phone, Safari painted the area
+      // a pull-to-refresh uncovers white above the black page (2026-09-15):
+      // the colour it had taken from the light meta on first read, which a
+      // later change of media did not make it read again. A change of content
+      // is the update browsers do follow, so under an override both metas say
+      // the chosen colour and it no longer matters which one Safari thinks
+      // applies. Not reproduced off the phone. Keep these in step with the
+      // metas' own content.
+      var COLOR = { light: '#ffffff', dark: '#000000' };
+      function themeColor() {
+        var metas = document.querySelectorAll('meta[name="theme-color"][data-scheme]');
+        for (var i = 0; i < metas.length; i++) {
+          var want = COLOR[theme === 'auto' ? metas[i].getAttribute('data-scheme') : theme];
+          if (metas[i].getAttribute('content') !== want) metas[i].setAttribute('content', want);
+        }
+      }
+
       // Everything a [data-theme] selector cannot reach. The media attribute
       // on a <picture> source or a theme-color meta is resolved by the BROWSER
       // against the system setting and ignores data-theme entirely, so under
@@ -49,6 +67,7 @@
           // over fifteen sources is main-thread time spent to change nothing.
           if (forked[i].getAttribute('media') !== want) forked[i].setAttribute('media', want);
         }
+        themeColor();
         // The hero videos are swapped by CSS display, and the script at the
         // end of the page picks which file to fetch from that. A manual
         // override never touches prefers-color-scheme, so its own media query

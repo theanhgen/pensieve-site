@@ -31,6 +31,19 @@
       // setting and ignores data-theme entirely, so under an override each one
       // is rewritten by hand to match all or nothing. Under "auto" they go
       // back to asking the system themselves.
+      // The colour as well as the media: Safari did not re-read a meta whose
+      // media changed after load, and painted a pull-to-refresh white above a
+      // dark override. See the same block in index.html. Keep these in step
+      // with the metas' own content.
+      var COLOR = { light: '#ffffff', dark: '#000000' };
+      function themeColor() {
+        var metas = document.querySelectorAll('meta[name="theme-color"][data-scheme]');
+        for (var i = 0; i < metas.length; i++) {
+          var want = COLOR[theme === 'auto' ? metas[i].getAttribute('data-scheme') : theme];
+          if (metas[i].getAttribute('content') !== want) metas[i].setAttribute('content', want);
+        }
+      }
+
       function paint() {
         root.setAttribute('data-theme', theme);
         var forked = document.querySelectorAll('[data-scheme]');
@@ -40,6 +53,7 @@
             theme === 'auto' ? '(prefers-color-scheme: ' + scheme + ')'
                              : (theme === scheme ? 'all' : 'not all'));
         }
+        themeColor();
         document.dispatchEvent(new CustomEvent('pensieve:theme', { detail: theme }));
       }
 

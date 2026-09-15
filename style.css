@@ -28,7 +28,11 @@
 :root[data-theme="dark"]  { color-scheme: dark; }
 
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-html { scroll-behavior: smooth; }
+/* The page colour on <html> too, not only on <body>. What a browser paints
+   past the page's edge (an overscroll, a pull-to-refresh) can come from the
+   root element, and with nothing set there it falls back to the system's
+   scheme rather than the one data-theme chose. */
+html { scroll-behavior: smooth; background: var(--bg); }
 body {
   font-family: var(--font);
   background: var(--bg);
