@@ -116,6 +116,14 @@
           try { localStorage.setItem(KEY, theme); } catch (e) {}
           paint();
           label();
+          // And then load the page again, for the one thing on it that cannot
+          // be repainted. Safari takes the colour of the area a pull-to-refresh
+          // uncovers once, at load, and keeps it: a toggle left a black band
+          // above a light page (2026-09-16), and neither rewriting the
+          // theme-color metas nor the background on <html> reaches it. The
+          // choice is in storage by the time this runs, so the page comes back
+          // the way it went out.
+          location.reload();
         });
       });
     })();

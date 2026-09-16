@@ -78,6 +78,9 @@
           try { localStorage.setItem(KEY, theme); } catch (e) {}
           paint();
           label();
+          // Safari keeps the pull-to-refresh colour it read at load, so the
+          // choice only reaches it on a fresh one. See index.html.
+          location.reload();
         });
       });
     })();
