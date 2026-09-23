@@ -10,124 +10,15 @@
   <link rel="icon" href="icon.png">
   <link rel="apple-touch-icon" href="icon.png">
   <link rel="manifest" href="site.webmanifest">
-  <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)" data-scheme="light">
-  <meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)" data-scheme="dark">
+  <!-- Light and dark, decided by the reader's system and nothing else. There
+       was a three-way toggle here until 2026-09-16; it went because Safari
+       takes the colour it paints behind a pull-to-refresh once, at load, and
+       nothing in the document reaches it afterwards — a theme chosen in the
+       page left the wrong colour above it. The system setting is the one the
+       browser already agrees with. -->
+  <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)">
 
-  <!-- Theme. Runs before the stylesheet so data-theme is on <html> for the
-       first paint and the page never shows one theme and then the other.
-       Three states — auto follows the system, light and dark override it —
-       kept under "pensieve-theme", the only thing this site ever writes to
-       storage, and read the same way by privacy.html. -->
-  <script>
-    (function () {
-      var KEY  = 'pensieve-theme';
-      var NEXT = { auto: 'light', light: 'dark', dark: 'auto' };
-      var root = document.documentElement;
-      var stored = null;
-      try { stored = localStorage.getItem(KEY); } catch (e) {}   // private mode throws
-      // Compared, not looked up: a stray value in storage must land on "auto"
-      // rather than on some inherited property name of the map above.
-      var theme = (stored === 'light' || stored === 'dark' || stored === 'auto') ? stored : 'auto';
-
-      // The theme-color metas get their colour rewritten as well as their
-      // media. Under a dark override on a light phone, Safari painted the area
-      // a pull-to-refresh uncovers white above the black page (2026-09-15):
-      // the colour it had taken from the light meta on first read, which a
-      // later change of media did not make it read again. A change of content
-      // is the update browsers do follow, so under an override both metas say
-      // the chosen colour and it no longer matters which one Safari thinks
-      // applies. Not reproduced off the phone. Keep these in step with the
-      // metas' own content.
-      var COLOR = { light: '#ffffff', dark: '#000000' };
-      function themeColor() {
-        var metas = document.querySelectorAll('meta[name="theme-color"][data-scheme]');
-        for (var i = 0; i < metas.length; i++) {
-          var want = COLOR[theme === 'auto' ? metas[i].getAttribute('data-scheme') : theme];
-          if (metas[i].getAttribute('content') !== want) metas[i].setAttribute('content', want);
-        }
-      }
-
-      // Everything a [data-theme] selector cannot reach. The media attribute
-      // on a <picture> source or a theme-color meta is resolved by the BROWSER
-      // against the system setting and ignores data-theme entirely, so under
-      // an override each one is rewritten by hand to match all or nothing.
-      // Under "auto" they go back to asking the system themselves.
-      function paint() {
-        if (root.getAttribute('data-theme') !== theme) root.setAttribute('data-theme', theme);
-        var forked = document.querySelectorAll('[data-scheme]');
-        for (var i = 0; i < forked.length; i++) {
-          var scheme = forked[i].getAttribute('data-scheme');
-          var want = theme === 'auto' ? '(prefers-color-scheme: ' + scheme + ')'
-                                      : (theme === scheme ? 'all' : 'not all');
-          // Compared before writing. paint() runs three times on a cold load
-          // (here, mid-body, DOMContentLoaded) and on the default "auto" every
-          // one of those writes the value that is already there — but setting
-          // media on a <source> re-runs the browser's source selection for the
-          // whole <picture> and invalidates style for it. Three needless passes
-          // over fifteen sources is main-thread time spent to change nothing.
-          if (forked[i].getAttribute('media') !== want) forked[i].setAttribute('media', want);
-        }
-        themeColor();
-        // The hero videos are swapped by CSS display, and the script at the
-        // end of the page picks which file to fetch from that. A manual
-        // override never touches prefers-color-scheme, so its own media query
-        // listener would never hear about this.
-        document.dispatchEvent(new CustomEvent('pensieve:theme', { detail: theme }));
-      }
-
-      paint();   // only the two metas exist this early; the sources follow below
-
-      // Called again from inside the body the moment a batch of [data-scheme]
-      // sources has been parsed. DOMContentLoaded on its own is too late: an
-      // override that disagrees with the system leaves the browser resolving
-      // each <picture> against prefers-color-scheme, so it renders the wrong
-      // file until the media attributes are rewritten. Painting at parse
-      // position closes that flash.
-      //
-      // It does NOT close the wasted fetch, and this comment used to claim it
-      // did. The preload scanner reads ahead of the parser and queues the
-      // OS-matching sources before any inline script runs, so an override that
-      // disagrees with the system pulls both sets: measured at 4 dark + 4 light
-      // webp on a light OS with "dark" stored, roughly 100 KB spent twice.
-      // Nothing executed from inside the document can beat the scanner. The
-      // only real fix is to move srcset behind data-srcset and populate it from
-      // JS, which trades this cost for a page whose images vanish entirely
-      // without JS — a bad trade for a marketing page that currently renders
-      // fully without it. Default "auto" never pays this; only a reader who has
-      // explicitly chosen the theme their OS disagrees with does, once.
-      window.pensievePaint = paint;
-
-      document.addEventListener('DOMContentLoaded', function () {
-        paint();
-        var btn = document.querySelector('.theme-toggle');
-        if (!btn) return;
-        // The word is the state, and the label says what a press will do —
-        // the control has three positions, so "toggle" would be a lie.
-        function label() {
-          btn.textContent = theme;
-          var name = 'theme: ' + theme + (theme === 'auto' ? ' (follows your system)' : '') +
-                     '. switch to ' + NEXT[theme] + '.';
-          btn.setAttribute('aria-label', name);
-          btn.setAttribute('title', name);
-        }
-        label();
-        btn.addEventListener('click', function () {
-          theme = NEXT[theme];
-          try { localStorage.setItem(KEY, theme); } catch (e) {}
-          paint();
-          label();
-          // And then load the page again, for the one thing on it that cannot
-          // be repainted. Safari takes the colour of the area a pull-to-refresh
-          // uncovers once, at load, and keeps it: a toggle left a black band
-          // above a light page (2026-09-16), and neither rewriting the
-          // theme-color metas nor the background on <html> reaches it. The
-          // choice is in storage by the time this runs, so the page comes back
-          // the way it went out.
-          location.reload();
-        });
-      });
-    })();
-  </script>
 
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://theanhgen.github.io/pensieve-site/">
@@ -318,11 +209,6 @@
       <span class="nav-wordmark">pensieve</span>
       <div class="nav-actions">
         <a href="#faq" class="nav-link">FAQ</a>
-        <!-- Cycles auto → light → dark. Hidden until the head script has set
-             data-theme: with no JS it would cycle nothing, and the page
-             follows the system on its own anyway. -->
-        <button class="theme-toggle" type="button"
-                aria-label="theme: auto (follows your system). switch to light.">auto</button>
       </div>
     </div>
   </nav>
@@ -336,10 +222,9 @@
       <div class="wrap hero-grid">
         <div class="hero-copy">
           <picture data-reveal style="--d:0ms">
-            <source srcset="icon-dark.png" media="(prefers-color-scheme: dark)" data-scheme="dark">
+            <source srcset="icon-dark.png" media="(prefers-color-scheme: dark)">
             <img src="icon.png" alt="pensieve app icon" class="app-icon-img" width="112" height="112" decoding="async">
           </picture>
-          <script>pensievePaint();</script>   <!-- the source above is parsed; fix its media before it is RENDERED (the scanner has already queued it) -->
           <h1 class="hero-title" data-reveal style="--d:40ms">a week,<br>then gone.
             <span class="visually-hidden"> pensieve, a journaling app where notes fade and disappear.</span>
           </h1>
@@ -420,8 +305,8 @@
           <div class="phone-frame phone-frame--small">
             <div class="phone-screen">
               <picture>
-                <source srcset="screenshots/write-dark.webp" type="image/webp" media="(prefers-color-scheme: dark)" data-scheme="dark">
-                <source srcset="screenshots/write-dark.png" media="(prefers-color-scheme: dark)" data-scheme="dark">
+                <source srcset="screenshots/write-dark.webp" type="image/webp" media="(prefers-color-scheme: dark)">
+                <source srcset="screenshots/write-dark.png" media="(prefers-color-scheme: dark)">
                 <source srcset="screenshots/write-light.webp" type="image/webp">
                 <img src="screenshots/write-light.png" class="device-shot" width="800" height="1632" loading="lazy" decoding="async"
                      alt="The pensieve capture bar with a thought being written">
@@ -436,8 +321,8 @@
           <div class="phone-frame phone-frame--small">
             <div class="phone-screen">
               <picture>
-                <source srcset="screenshots/fade-dark.webp" type="image/webp" media="(prefers-color-scheme: dark)" data-scheme="dark">
-                <source srcset="screenshots/fade-dark.png" media="(prefers-color-scheme: dark)" data-scheme="dark">
+                <source srcset="screenshots/fade-dark.webp" type="image/webp" media="(prefers-color-scheme: dark)">
+                <source srcset="screenshots/fade-dark.png" media="(prefers-color-scheme: dark)">
                 <source srcset="screenshots/fade-light.webp" type="image/webp">
                 <img src="screenshots/fade-light.png" class="device-shot" width="800" height="1632" loading="lazy" decoding="async"
                      alt="The pensieve notes list, with older notes fading toward transparency">
@@ -452,8 +337,8 @@
           <div class="phone-frame phone-frame--small">
             <div class="phone-screen">
               <picture>
-                <source srcset="screenshots/empty-dark.webp" type="image/webp" media="(prefers-color-scheme: dark)" data-scheme="dark">
-                <source srcset="screenshots/empty-dark.png" media="(prefers-color-scheme: dark)" data-scheme="dark">
+                <source srcset="screenshots/empty-dark.webp" type="image/webp" media="(prefers-color-scheme: dark)">
+                <source srcset="screenshots/empty-dark.png" media="(prefers-color-scheme: dark)">
                 <source srcset="screenshots/empty-light.webp" type="image/webp">
                 <img src="screenshots/empty-light.png" class="device-shot" width="800" height="1632" loading="lazy" decoding="async"
                      alt="The pensieve empty state after a note is released, reading “Nothing left to carry.”">
@@ -462,7 +347,6 @@
           </div>
         </div>
       </div>
-      <script>pensievePaint();</script>   <!-- same again for the six sources above; closes the flash, not the fetch -->
     </section>
 
     <!-- The one place on the page where the reader's own words fade. Every part
@@ -488,7 +372,7 @@
 
           <p class="demo-privacy" data-reveal style="--d:40ms">nothing you type here leaves your browser: not stored, not sent, no third parties.</p>
 
-          <!-- Same card, same 3px bar, same type as the widget mockups below:
+          <!-- Same card, same 2px bar, same type as the widget mockups below:
                what fades here is meant to read as the same object. -->
           <div class="app-widget demo-panel is-empty" id="demo-panel" data-reveal style="--d:80ms">
             <span class="app-widget-label">fading</span>
@@ -526,7 +410,7 @@
       <div class="wrap">
         <h2 data-reveal>see what’s fading.</h2>
         <p data-reveal style="--d:80ms">put it on your Home Screen, your Lock Screen, or in Control Center. glance instead of opening the app.</p>
-        <!-- Three of the five widgets the app ships. Colours, the 3px bar and the
+        <!-- Three of the five widgets the app ships. Colours, the 2px bar and the
              per-note fade opacity mirror PensieveWidget: PensieveRelease for
              fading notes, PensieveAmber for pinned ones, PensieveMuted labels. -->
         <div class="app-widget-row">
@@ -853,9 +737,6 @@
       start();
       var mq = window.matchMedia('(prefers-color-scheme: dark)');
       if (mq.addEventListener) mq.addEventListener('change', function () { setTimeout(start, 0); });
-      // The theme toggle never touches prefers-color-scheme, so the query
-      // above stays silent through an override — it announces itself instead.
-      document.addEventListener('pensieve:theme', function () { setTimeout(start, 0); });
 
       // Don't decode frames nobody can see. The hero used to loop for the whole
       // visit, including while the reader is all the way down in the FAQ.

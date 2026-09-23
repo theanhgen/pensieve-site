@@ -18,20 +18,20 @@
   color-scheme: light dark;
 }
 
-/* ─ theme states ─────────────────────────────────────────── */
-/* Three states, written to data-theme before first paint: "auto" (or no
-   attribute at all, which is what a reader without JS gets) leaves every
-   prefers-color-scheme query below in charge; "light" and "dark" override it.
-   An explicit choice also pins the UA's own surfaces — form controls, the
-   scrollbar — so the page and its chrome cannot disagree. */
-:root[data-theme="light"] { color-scheme: light; }
-:root[data-theme="dark"]  { color-scheme: dark; }
+/* ─ theme ────────────────────────────────────────────────── */
+/* One state: the reader's system setting, through the prefers-color-scheme
+   queries below and the color-scheme above, which also hands the UA's own
+   surfaces — form controls, the scrollbar — the same answer. A three-way
+   toggle used to write data-theme over all of it. It went on 2026-09-16:
+   Safari decides once per load what colour to paint behind a pull-to-refresh,
+   and a theme chosen after that never reaches it, so the toggle could only
+   ever leave the wrong colour above the page. */
 
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 /* The page colour on <html> too, not only on <body>. What a browser paints
    past the page's edge (an overscroll, a pull-to-refresh) can come from the
-   root element, and with nothing set there it falls back to the system's
-   scheme rather than the one data-theme chose. */
+   root element, and with nothing set there it falls back to the UA's own
+   default rather than to the page's ground. */
 html { scroll-behavior: smooth; background: var(--bg); }
 body {
   font-family: var(--font);
@@ -150,31 +150,6 @@ picture[data-reveal] { display: inline-block; }
   align-items: center;
   gap: 1.25rem;
 }
-/* The word IS the state — "auto", "light", "dark" — and clicking cycles to the
-   next one. Quieter than the nav link beside it: this is a control for the
-   reader who wants it, not a second destination. */
-.theme-toggle {
-  /* Shown only once the head script has set data-theme. Without JS it would
-     cycle nothing, and the page already follows the system on its own. */
-  display: none;
-  align-items: center;
-  font-family: var(--font);
-  font-size: 0.8125rem;
-  font-weight: 400;
-  letter-spacing: -0.01em;
-  color: var(--muted);
-  background: none;
-  border: 1px solid var(--rule);
-  border-radius: 999px;
-  padding: 0.25rem 0.625rem;
-  cursor: pointer;
-  transition:
-    color 0.15s var(--ease-out),
-    border-color 0.15s var(--ease-out),
-    opacity 0.15s var(--ease-out);
-}
-html[data-theme] .theme-toggle { display: inline-flex; }
-
 /* ─ hero ─────────────────────────────────────────────────── */
 /* Two columns: the offer, and the app performing it. The device used to be its
    own section below; showing it beside the headline is the point — the product
@@ -242,16 +217,11 @@ html[data-theme] .theme-toggle { display: inline-flex; }
    the one fork on this page running opposite to the tokens above, which are
    dark by default.
 
-   Every theme fork from here down is written twice: once for the explicit
-   choice, once for "auto" inside the media query. A media query cannot be
-   OR'd with an attribute selector, and the pair is what keeps the page
-   following the system with no JS. The auto half spells out both "auto" and
-   "no attribute yet", so the two halves can never both match and their order
-   never decides anything. */
-:root[data-theme="dark"] .appstore-badge { filter: invert(1); }
+   Every theme fork from here down is a plain prefers-color-scheme query.
+   They used to be written twice, once more for an explicit choice; there is
+   no explicit choice any more. */
 @media (prefers-color-scheme: dark) {
-  :root[data-theme="auto"] .appstore-badge,
-  :root:not([data-theme]) .appstore-badge { filter: invert(1); }
+  .appstore-badge { filter: invert(1); }
 }
 .hero-cta-note {
   font-size: 0.8125rem;
@@ -365,13 +335,9 @@ html[data-theme] .theme-toggle { display: inline-flex; }
    file to fetch, so this rule is also what picks the download. */
 .device-shot--dark  { display: none; }
 .device-shot--light { display: block; }
-:root[data-theme="dark"] .device-shot--dark  { display: block; }
-:root[data-theme="dark"] .device-shot--light { display: none; }
 @media (prefers-color-scheme: dark) {
-  :root[data-theme="auto"] .device-shot--dark,
-  :root:not([data-theme]) .device-shot--dark  { display: block; }
-  :root[data-theme="auto"] .device-shot--light,
-  :root:not([data-theme]) .device-shot--light { display: none; }
+  .device-shot--dark  { display: block; }
+  .device-shot--light { display: none; }
 }
 
 /* The mechanic cards: no bezel, no device silhouette — a plain rounded crop
@@ -402,7 +368,7 @@ html[data-theme] .theme-toggle { display: inline-flex; }
 }
 
 /* ─ Fading home-screen widget (matches the real app widget) ─ */
-/* Colors, 3px accent bar, section header, and per-note fade opacity all
+/* Colors, 2px accent bar, section header, and per-note fade opacity all
    mirror PensieveWidget's FadingWidgetView (PensievePaper/Ink/Muted/Release). */
 /* Three widgets side by side; they stack under 900px with the hero. */
 .app-widget-row {
@@ -452,9 +418,9 @@ html[data-theme] .theme-toggle { display: inline-flex; }
   opacity: var(--o, 1);
 }
 .app-widget-bar {
-  width: 3px;
+  width: 2px;
   flex-shrink: 0;
-  border-radius: 1.5px;
+  border-radius: 1px;
   background: var(--w-bar);
   align-self: stretch;
 }
@@ -499,30 +465,16 @@ html[data-theme] .theme-toggle { display: inline-flex; }
   flex-shrink: 0;
 }
 
-/* Written twice — see the note at .appstore-badge. */
-:root[data-theme="dark"] .app-widget {
-  --w-paper: #17130f;
-  --w-ink:   #e8e1d8;
-  --w-muted: #8a7b6b;
-  --w-bar:   #b09070;
-  box-shadow: rgba(0, 0, 0, 0.45) 0 22px 50px;
-}
-:root[data-theme="dark"] .app-widget--held { --w-bar: #d49567; }
-:root[data-theme="dark"] .app-widget-capture { border-top-color: rgba(138, 123, 107, 0.3); }
-
 @media (prefers-color-scheme: dark) {
-  :root[data-theme="auto"] .app-widget,
-  :root:not([data-theme]) .app-widget {
+  .app-widget {
     --w-paper: #17130f;
     --w-ink:   #e8e1d8;
     --w-muted: #8a7b6b;
     --w-bar:   #b09070;
     box-shadow: rgba(0, 0, 0, 0.45) 0 22px 50px;
   }
-  :root[data-theme="auto"] .app-widget--held,
-  :root:not([data-theme]) .app-widget--held { --w-bar: #d49567; }
-  :root[data-theme="auto"] .app-widget-capture,
-  :root:not([data-theme]) .app-widget-capture { border-top-color: rgba(138, 123, 107, 0.3); }
+  .app-widget--held { --w-bar: #d49567; }
+  .app-widget-capture { border-top-color: rgba(138, 123, 107, 0.3); }
 }
 
 /* ─ mechanic ─────────────────────────────────────────────── */
@@ -1011,7 +963,6 @@ html.js .faq-answer.is-open {
   .faq-question:hover { opacity: 0.7; }
   .footer-link:hover  { color: var(--ink); }
   .demo-submit:hover  { opacity: 0.82; }
-  .theme-toggle:hover { color: var(--ink); border-color: var(--muted); }
 }
 
 /* ─ press ────────────────────────────────────────────────── */
@@ -1024,8 +975,7 @@ html.js .faq-answer.is-open {
 .cta-mailto:active,
 .footer-link:active,
 .faq-question:active,
-.demo-submit:active,
-.theme-toggle:active {
+.demo-submit:active {
   opacity: 0.55;
   transition-duration: 60ms;
 }
@@ -1039,17 +989,8 @@ html.js .faq-answer.is-open {
 .nav-link,
 .footer-link,
 .privacy-link,
-.cta-mailto,
-.theme-toggle {
+.cta-mailto {
   position: relative;
-}
-/* The pill measures 26px tall, so it needs 9px on each edge to reach 44. The
-   6px sideways leaves 4px between this target and the nav link's, across the
-   1.25rem gap between them. */
-.theme-toggle::after {
-  content: '';
-  position: absolute;
-  inset: -0.5625rem -0.375rem;
 }
 .nav-link::after,
 .footer-link::after {
@@ -1167,26 +1108,12 @@ html.js .faq-answer.is-open {
 }
 
 /* ─ light mode ───────────────────────────────────────────── */
-/* Written twice — see the note at .appstore-badge. No .phone-frame box-shadow
-   in either half: the one this block used to carry was a leftover from the
-   gradient-bezel era (opaque, border-radius: 54px); on the transparent, square
-   frame it painted the infamous "Safari white rectangle" — see the note in
-   .phone-screen. */
-:root[data-theme="light"] {
-  --bg:          #ffffff;
-  --bg-card:     #f5f5f7;
-  --ink:         #1d1d1f;
-  --muted:       #6e6e73;
-  --rule:        #d2d2d7;
-  --accent:      #744f34;
-  --nav-bg:      rgba(255, 255, 255, 0.82);
-  --icon-shadow: rgba(41, 32, 24, 0.10) 0 4px 12px, rgba(41, 32, 24, 0.10) 0 16px 48px;
-}
-:root[data-theme="light"] .app-icon-img { outline-color: rgba(0, 0, 0, 0.08); }
-
+/* No .phone-frame box-shadow here: the one this block used to carry was a
+   leftover from the gradient-bezel era (opaque, border-radius: 54px); on the
+   transparent, square frame it painted the infamous "Safari white rectangle"
+   — see the note in .phone-screen. */
 @media (prefers-color-scheme: light) {
-  :root[data-theme="auto"],
-  :root:not([data-theme]) {
+  :root {
     --bg:          #ffffff;
     --bg-card:     #f5f5f7;
     --ink:         #1d1d1f;
@@ -1196,8 +1123,7 @@ html.js .faq-answer.is-open {
     --nav-bg:      rgba(255, 255, 255, 0.82);
     --icon-shadow: rgba(41, 32, 24, 0.10) 0 4px 12px, rgba(41, 32, 24, 0.10) 0 16px 48px;
   }
-  :root[data-theme="auto"] .app-icon-img,
-  :root:not([data-theme]) .app-icon-img { outline-color: rgba(0, 0, 0, 0.08); }
+  .app-icon-img { outline-color: rgba(0, 0, 0, 0.08); }
 }
 
 /* ─ reduced transparency ─────────────────────────────────── */
@@ -1226,16 +1152,9 @@ html.js .faq-answer.is-open {
     backdrop-filter: none;
     -webkit-backdrop-filter: none;
   }
-  /* An explicit light choice needs the light pair even on a dark system, so
-     this one cannot live in the media query below with the "auto" half. */
-  :root[data-theme="light"] {
-    --muted: #4a4a52;
-    --rule:  #8e8e93;
-  }
 }
 @media (prefers-contrast: more) and (prefers-color-scheme: light) {
-  :root[data-theme="auto"],
-  :root:not([data-theme]) {
+  :root {
     --muted: #4a4a52;
     --rule:  #8e8e93;
   }
