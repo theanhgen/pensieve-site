@@ -8,7 +8,7 @@ the days pass and is gone in a week by default. There is no archive and no
 search: once a note fades on its own it cannot be recovered, which is the
 point. Notes deleted by hand sit in Trash for 30 days first.
 
-- Platform: iPhone, iOS 17.0 or later. No iPad or Mac app.
+- Platform: iPhone, iOS 27.0 or later. No iPad or Mac app.
 - Price: free, no ads, no account. An optional supporter purchase unlocks
   "never", a note released that way stays until you delete it.
 - Pinning is free and pauses a note's fade until you unpin it. Unpinning starts
