@@ -7,7 +7,13 @@
   <meta name="description" content="write a thought. watch it fade. let it go. pensieve is a journaling app that forgets on purpose.">
 
   <link rel="canonical" href="https://theanhgen.github.io/pensieve-site/">
-  <link rel="icon" href="icon.png">
+  <!-- The water mark as the tab icon: mark.svg is the shipped icon's art (the
+       Water Mark Lab's settings, DESIGN.md §05) with its paths simplified and
+       its square ground left off, ~7 KB. The PNG is the fallback for a browser
+       that takes no SVG icon; it is the 192px one, not the 1024px icon.png,
+       which was a 66 KB download for a 16px tab. -->
+  <link rel="icon" href="icon-192.png" sizes="192x192" type="image/png">
+  <link rel="icon" href="mark.svg" type="image/svg+xml">
   <link rel="apple-touch-icon" href="icon.png">
   <link rel="manifest" href="site.webmanifest">
   <!-- Light and dark, decided by the reader's system and nothing else. There
@@ -80,12 +86,18 @@
           "no account, no ads and no analytics",
           "notes stay on device; iCloud sync is off by default",
           "Home Screen, Lock Screen and Control Center widgets",
-          "share sheet extension for capturing from other apps"
+          "share sheet extension for capturing from other apps",
+          "voice notes that keep the recording and the words, transcribed on device in english or czech",
+          "record a voice note from the Action Button with the app closed, shown as a Live Activity in the Dynamic Island",
+          "Apple Watch companion app for recording a note from the wrist or a complication",
+          "optional Face ID or passcode lock"
         ],
         "screenshot": [
           "https://theanhgen.github.io/pensieve-site/screenshots/write-light.png",
           "https://theanhgen.github.io/pensieve-site/screenshots/fade-light.png",
-          "https://theanhgen.github.io/pensieve-site/screenshots/empty-light.png"
+          "https://theanhgen.github.io/pensieve-site/screenshots/empty-light.png",
+          "https://theanhgen.github.io/pensieve-site/screenshots/voice-light.png",
+          "https://theanhgen.github.io/pensieve-site/screenshots/watch.png"
         ],
         "author": {
           "@id": "https://theanhgen.github.io/pensieve-site/#person"
@@ -116,7 +128,7 @@
           "width": 1200,
           "height": 630
         },
-        "dateModified": "2026-08-31"
+        "dateModified": "2026-11-12"
       },
       {
         "@type": "FAQPage",
@@ -172,6 +184,22 @@
           },
           {
             "@type": "Question",
+            "name": "which languages do voice notes understand?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "english and czech. pensieve writes out what you said on your iPhone, trying english first, then czech. other languages are still recorded, but the words written out for them come out wrong."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "can i lock pensieve?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "yes. turn on Face ID in Settings and pensieve asks for Face ID or your passcode before it opens. the lock is off by default."
+            }
+          },
+          {
+            "@type": "Question",
             "name": "does pensieve sync across my devices?",
             "acceptedAnswer": {
               "@type": "Answer",
@@ -180,10 +208,10 @@
           },
           {
             "@type": "Question",
-            "name": "does it work on iPad or Mac?",
+            "name": "does it work on Apple Watch, iPad or Mac?",
             "acceptedAnswer": {
               "@type": "Answer",
-              "text": "iPhone only for now."
+              "text": "pensieve is for iPhone, with a companion app for Apple Watch that records notes from your wrist. there is no iPad or Mac app."
             }
           },
           {
@@ -206,7 +234,18 @@
 
   <nav class="nav" aria-label="Primary">
     <div class="wrap">
-      <span class="nav-wordmark">pensieve</span>
+      <!-- The mark in two files rather than one with a media query inside it:
+           an SVG in an <img> answers prefers-color-scheme on its own terms in
+           some browsers, and <picture> is the switch every other image on this
+           page already uses. Both files are the same paths in the app's light
+           and dark colours (the splash's dark look: sepia on dark paper). -->
+      <span class="nav-wordmark">
+        <picture>
+          <source srcset="mark-dark.svg" media="(prefers-color-scheme: dark)">
+          <img src="mark.svg" alt="" class="nav-mark" width="22" height="22" decoding="async">
+        </picture>
+        pensieve
+      </span>
       <div class="nav-actions">
         <a href="#faq" class="nav-link">FAQ</a>
       </div>
@@ -221,10 +260,18 @@
     <section class="hero">
       <div class="wrap hero-grid">
         <div class="hero-copy">
-          <picture data-reveal style="--d:0ms">
-            <source srcset="icon-dark.png" media="(prefers-color-scheme: dark)">
-            <img src="icon.png" alt="pensieve app icon" class="app-icon-img" width="112" height="112" decoding="async">
-          </picture>
+          <!-- The water mark itself, not the app icon's square: the page is
+               the ground here. On load the script at the end of the page may
+               draw it gathering out of still water first (the app's splash,
+               SplashGather.swift, made smaller and shorter); this <img> is
+               what holds afterwards, and all there is without JS or under
+               reduced motion. -->
+          <div class="hero-mark" data-reveal style="--d:0ms">
+            <picture>
+              <source srcset="mark-dark.svg" media="(prefers-color-scheme: dark)">
+              <img src="mark.svg" alt="the pensieve water mark: bands of water and two pebbles in a round basin" class="hero-mark-img" width="96" height="96" decoding="async">
+            </picture>
+          </div>
           <h1 class="hero-title" data-reveal style="--d:40ms">a week,<br>then gone.
             <span class="visually-hidden"> pensieve, a journaling app where notes fade and disappear.</span>
           </h1>
@@ -301,7 +348,7 @@
         <div class="mechanic-step mechanic-step--with-screen" data-reveal style="--d:0ms">
           <span class="step-num">01</span>
           <h3>write</h3>
-          <p>type what you’re carrying. no title, no tag, no category.</p>
+          <p>type what you’re carrying, or say it. no title, no tag, no category.</p>
           <div class="phone-frame phone-frame--small">
             <div class="phone-screen">
               <picture>
@@ -401,6 +448,66 @@
           <div class="feature-card" data-reveal style="--d:80ms">
             <h3>no account,<br>no tracking.</h3>
             <p>no sign-up, no ads, no analytics. your notes never touch a server of ours. we don’t have any.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Voice, and the two ways in that need no screen. Copy follows the App
+         Store description (metadata/en-US/description.txt) and claims nothing
+         past it: english or czech only, because transcription tries english and
+         falls back to czech and anything else comes out wrong; nothing about the
+         Action Button with the phone locked, which has not been tried. The
+         watch is a card, not a section of its own, on purpose. -->
+    <section class="voice">
+      <div class="wrap">
+        <div class="voice-grid">
+          <div class="voice-copy" data-reveal>
+            <h2>say it instead.</h2>
+            <p>hold the mic and talk. the note keeps your voice and the words, written out on your phone in english or czech. it fades like any other note, the recording with it.</p>
+          </div>
+          <div class="voice-shot" data-reveal style="--d:80ms">
+            <div class="phone-frame phone-frame--small">
+              <div class="phone-screen">
+                <picture>
+                  <source srcset="screenshots/voice-dark.webp" type="image/webp" media="(prefers-color-scheme: dark)">
+                  <source srcset="screenshots/voice-dark.png" media="(prefers-color-scheme: dark)">
+                  <source srcset="screenshots/voice-light.webp" type="image/webp">
+                  <img src="screenshots/voice-light.png" class="device-shot" width="800" height="1632" loading="lazy" decoding="async"
+                       alt="The pensieve notes list with two voice notes, each a waveform and a duration, one with its words written out underneath">
+                </picture>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="voice-ways">
+          <div class="feature-card voice-way" data-reveal style="--d:0ms">
+            <h3>from the Action Button.</h3>
+            <p>set the Action Button to pensieve’s “record a voice note” and press it, with the app closed. the take shows in the Dynamic Island while you talk. press again and it’s kept. Siri and Shortcuts can start one too.</p>
+            <!-- Drawn, not captured, like the widgets below: neither a simulator
+                 screenshot nor a device one includes the Dynamic Island. The
+                 compact layout and colours are VoiceTakeLiveActivity's: the
+                 waveform in PensieveRecord (its dark value; the island is
+                 always dark), the clock in the island's fixed paper. -->
+            <div class="island-stage" role="img" aria-label="The Dynamic Island while pensieve records: a red waveform on the left and the take’s running time on the right">
+              <div class="island">
+                <span class="island-wave" aria-hidden="true"><i style="--h:.35"></i><i style="--h:.7"></i><i style="--h:.5"></i><i style="--h:.95"></i><i style="--h:.6"></i><i style="--h:.8"></i><i style="--h:.4"></i><i style="--h:.75"></i><i style="--h:.55"></i><i style="--h:.3"></i></span>
+                <span class="island-clock" aria-hidden="true">0:07</span>
+              </div>
+            </div>
+          </div>
+          <div class="feature-card voice-way" data-reveal style="--d:40ms">
+            <h3>on your wrist.</h3>
+            <p>the Apple Watch app records a note from your wrist or its complication and sends it to your phone. turn the Digital Crown to choose how long it stays.</p>
+            <!-- One file for both themes: watchOS has no light appearance. -->
+            <div class="watch-stage">
+              <picture>
+                <source srcset="screenshots/watch.webp" type="image/webp">
+                <img src="screenshots/watch.png" class="watch-shot" width="208" height="248" loading="lazy" decoding="async"
+                     alt="The pensieve Apple Watch app: a red record button, “tap or hold”, and “fades after 7d” underneath">
+              </picture>
+            </div>
           </div>
         </div>
       </div>
@@ -516,7 +623,7 @@
 
     <section class="privacy">
       <div class="wrap" data-reveal>
-        <p><strong>private by design.</strong><br>your notes live on your device. turn on iCloud sync and they travel through your own private iCloud, never through us.</p>
+        <p><strong>private by design.</strong><br>your notes live on your device. lock pensieve with Face ID if you want to. turn on iCloud sync and they travel through your own private iCloud, never through us.</p>
         <!-- Pricing used to exist only inside FAQ answer #faq-pricing, behind a
              closed accordion, so a visitor could read the whole page without
              learning the app is free. This line is a compression of that
@@ -573,21 +680,37 @@
           </div>
           <div class="faq-item" data-reveal style="--d:200ms">
             <h3 class="faq-heading">
+              <button class="faq-question" aria-expanded="false" aria-controls="faq-voice-languages">which languages do voice notes understand?</button>
+            </h3>
+            <div class="faq-answer" id="faq-voice-languages"><div class="faq-answer-inner">
+              <p>english and czech. pensieve writes out what you said on your iPhone, trying english first, then czech. other languages are still recorded, but the words written out for them come out wrong.</p>
+            </div></div>
+          </div>
+          <div class="faq-item" data-reveal style="--d:240ms">
+            <h3 class="faq-heading">
+              <button class="faq-question" aria-expanded="false" aria-controls="faq-lock">can i lock pensieve?</button>
+            </h3>
+            <div class="faq-answer" id="faq-lock"><div class="faq-answer-inner">
+              <p>yes. turn on Face ID in Settings and pensieve asks for Face ID or your passcode before it opens. the lock is off by default.</p>
+            </div></div>
+          </div>
+          <div class="faq-item" data-reveal style="--d:280ms">
+            <h3 class="faq-heading">
               <button class="faq-question" aria-expanded="false" aria-controls="faq-sync">does pensieve sync across my devices?</button>
             </h3>
             <div class="faq-answer" id="faq-sync"><div class="faq-answer-inner">
               <p>only if you ask it to. iCloud sync is off by default. turn it on and your notes sync across your own Apple devices through your private iCloud, never through a server of ours.</p>
             </div></div>
           </div>
-          <div class="faq-item" data-reveal style="--d:240ms">
+          <div class="faq-item" data-reveal style="--d:320ms">
             <h3 class="faq-heading">
-              <button class="faq-question" aria-expanded="false" aria-controls="faq-platforms">does it work on iPad or Mac?</button>
+              <button class="faq-question" aria-expanded="false" aria-controls="faq-platforms">does it work on Apple Watch, iPad or Mac?</button>
             </h3>
             <div class="faq-answer" id="faq-platforms"><div class="faq-answer-inner">
-              <p>iPhone only for now.</p>
+              <p>pensieve is for iPhone, with a companion app for Apple Watch that records notes from your wrist. there is no iPad or Mac app.</p>
             </div></div>
           </div>
-          <div class="faq-item" data-reveal style="--d:280ms">
+          <div class="faq-item" data-reveal style="--d:360ms">
             <h3 class="faq-heading">
               <button class="faq-question" aria-expanded="false" aria-controls="faq-ios-version">what iOS version does it need?</button>
             </h3>
@@ -616,7 +739,13 @@
 
   <footer class="footer">
     <div class="wrap">
-      <span class="footer-name">pensieve</span>
+      <span class="footer-name">
+        <picture>
+          <source srcset="mark-dark.svg" media="(prefers-color-scheme: dark)">
+          <img src="mark.svg" alt="" class="footer-mark" width="18" height="18" loading="lazy" decoding="async">
+        </picture>
+        pensieve
+      </span>
       <nav class="footer-links" aria-label="Footer">
         <!-- No FAQ link here: the FAQ ends directly above this footer, so the
              link asks the reader to jump to where they already are. It stays in
@@ -747,6 +876,189 @@
           if (onScreen) start();
           else heroes.forEach(function (v) { v.pause(); });
         }, { threshold: 0 }).observe(stage);
+      }
+    })();
+  </script>
+  <script>
+    // The hero mark gathers out of still water once per page load: the app's
+    // splash (SplashGather.swift, StillWater.swift) at the size of one image.
+    // Horizontal hairlines breathe for a moment, draw in toward the middle,
+    // thicken where the mark's shapes are until they run together into its
+    // bands, and the ring draws round; the real <img> fades in over the last
+    // third of that, so the drawn bands, coarser than the mark's, never stand
+    // alone, and the canvas goes. About 2.6 seconds, all of it on this one
+    // 96px box: the headline, the copy and the video never wait for it.
+    //
+    // Same origin only: the paths come from the mark file the <img> already
+    // names. Skipped under reduced motion, without canvas or Path2D, and if
+    // the file takes longer than 700ms, so a slow connection gets the still
+    // mark rather than an animation arriving after the reader has moved on.
+    (function () {
+      var box = document.querySelector('.hero-mark');
+      if (!box) return;
+      if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+      var canvas = document.createElement('canvas');
+      if (!canvas.getContext || !window.Path2D || !window.fetch || !window.requestAnimationFrame) return;
+
+      var dark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      // DESIGN.md §02, the splash's palette: ink ring, sepia bands, paper disc.
+      var pal = dark
+        ? { ink: '232,225,216', sepia: '176,144,112', disc: '23,19,15' }
+        : { ink: '34,26,18', sepia: '116,79,52', disc: '246,243,237' };
+      var TONES = [0.45, 0.62, 0.8, 1];
+
+      // Hidden synchronously, before the reveal fades the box in, so the still
+      // mark never shows and then vanishes. Every way out of here undoes it.
+      box.classList.add('is-gathering');
+      var done = false, img = box.querySelector('img');
+      function finish() {
+        if (done) return;
+        done = true;
+        if (img) img.style.opacity = '';
+        box.classList.remove('is-gathering');
+        canvas.classList.add('is-gone');
+        setTimeout(function () { canvas.remove(); }, 500);
+      }
+      setTimeout(finish, 4000);   // the backstop: nothing here may hide the mark for good
+
+      var started = performance.now();
+      fetch(dark ? 'mark-dark.svg' : 'mark.svg')
+        .then(function (r) { if (!r.ok) throw 0; return r.text(); })
+        .then(function (svg) {
+          if (performance.now() - started > 700) throw 0;
+          var ds = [], re = / d="([^"]+)"/g, m;
+          while ((m = re.exec(svg))) ds.push(new Path2D(m[1]));
+          if (ds.length !== 4) throw 0;
+          run(ds);
+        })
+        .catch(finish);
+
+      function smooth(a, b, v) { var t = Math.min(1, Math.max(0, (v - a) / (b - a))); return t * t * (3 - 2 * t); }
+      function ease(t) { return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2; }
+
+      function run(ds) {
+        var side = box.clientWidth || 96, dpr = Math.min(2, window.devicePixelRatio || 1);
+        var px = Math.round(side * dpr), k = px / 120;   // device pixels per grid unit
+        canvas.width = canvas.height = px;
+        canvas.className = 'hero-mark-gather';
+        canvas.setAttribute('aria-hidden', 'true');
+        box.appendChild(canvas);
+        var ctx = canvas.getContext('2d');
+
+        // Which shape covers a grid point: the four shapes rasterised once at
+        // four pixels to a unit, the pebbles clipped to the basin as they are
+        // in the mark.
+        var MS = 4, MP = 120 * MS;
+        var masks = ds.map(function (p, i) {
+          var c = document.createElement('canvas'); c.width = c.height = MP;
+          var x = c.getContext('2d'); x.scale(MS, MS);
+          if (i === 0) { x.beginPath(); x.arc(60, 60, 39.5, 0, Math.PI * 2); x.clip(); }
+          x.fill(p);
+          var d = x.getImageData(0, 0, MP, MP).data, a = new Uint8Array(MP * MP);
+          for (var j = 0; j < a.length; j++) a[j] = d[j * 4 + 3];
+          return a;
+        });
+        function cover(s, x, y) {
+          var u = x * MS | 0, v = y * MS | 0;
+          return u < 0 || v < 0 || u >= MP || v >= MP ? 0 : masks[s][v * MP + u] / 255;
+        }
+        // The bands are drawn opaque into their own layer, then laid down at
+        // their tone, so neighbouring lines that overlap do not stripe darker.
+        var layer = document.createElement('canvas'); layer.width = layer.height = px;
+        var lctx = layer.getContext('2d');
+
+        // StillWater's lines, at this scale: 27 across the box, 6 units apart.
+        var N = 27, STEP = 6, TOP = -18, xs = [];
+        for (var x = -1; x <= 121; x += 1.5) xs.push(x);
+        var seeds = [];
+        for (var i = 0; i < N; i++) seeds.push([(Math.sin(i * 12.9898) * 43758.5453) % 1, (Math.sin(i * 78.233) * 12345.678) % 1]);
+        function lift(i, x, t) {   // StillWater.lift, in grid units (1.55pt each, as in the splash)
+          var a = seeds[i][0], b = seeds[i][1], X = x * 1.55, u = (X - 93) / (186 * 0.32);
+          var env = 0.25 + 0.75 * Math.exp(-u * u);
+          var n = 0.55 * Math.sin(X * 0.09 + a * 20 + t * 0.32) + 0.35 * Math.sin(X * 0.21 + b * 30 - t * 0.21) + 0.25 * Math.sin(X * 0.37 + (a + b) * 9 + t * 0.13);
+          return env * (2.5 + 3 * Math.max(0, n)) * (0.6 + 0.4 * Math.sin(t * 0.3 + i * 0.21)) / 1.55;
+        }
+        var ys = new Float64Array(xs.length), cs = new Float64Array(xs.length), hs = new Float64Array(xs.length);
+        function line(c, yy, hh) {
+          c.beginPath(); c.moveTo(xs[0], yy[0] - (hh ? hh[0] : 0));
+          for (var j = 1; j < xs.length; j++) c.lineTo(xs[j], yy[j] - (hh ? hh[j] : 0));
+          if (hh) { for (j = xs.length - 1; j >= 0; j--) c.lineTo(xs[j], yy[j] + hh[j]); c.closePath(); }
+        }
+
+        var t0 = null, clock = (performance.now() / 1000) % 20000;
+        function frame(now) {
+          if (done) return;
+          if (t0 === null) t0 = now;
+          var t = (now - t0) / 1000;
+          // 0.3s of still water, 2.0s gathering, then the image takes over.
+          var g = t < 0.3 ? 0 : ease(Math.min(1, (t - 0.3) / 2.0));
+          var gt = smooth(0.35, 1, g), time = clock + t;
+          // The cross-fade: the mark comes up from 0.7 of the way, the drawing
+          // goes over the last 0.15. Inline, and cleared by finish().
+          if (img) img.style.opacity = String(smooth(0.7, 1, g));
+          canvas.style.opacity = String(1 - smooth(0.85, 1, g));
+
+          ctx.setTransform(1, 0, 0, 1, 0, 0);
+          ctx.clearRect(0, 0, px, px);
+          ctx.setTransform(k, 0, 0, k, 0, 0);
+          lctx.setTransform(1, 0, 0, 1, 0, 0);
+          lctx.clearRect(0, 0, px, px);
+
+          var disc = smooth(0.55, 1, g);
+          if (disc > 0) {
+            ctx.beginPath(); ctx.arc(60, 60, 47.1, 0, Math.PI * 2);
+            ctx.fillStyle = 'rgba(' + pal.disc + ',' + disc + ')'; ctx.fill();
+          }
+
+          var layers = [[], [], [], []];
+          for (var i = 0; i < N; i++) {
+            var base = TOP + i * STEP;
+            for (var j = 0; j < xs.length; j++) {
+              var u = (xs[j] - 60) / (46.1 * 1.35), pull = Math.exp(-u * u);
+              var y0 = base - lift(i, xs[j], time) * (1 - g * pull);
+              var c = 1 - 0.3 * g * pull;
+              cs[j] = c; ys[j] = 60 + (y0 - 60) * c;
+            }
+            // A round patch of water, not a square: ink falls to nothing toward
+            // the box's edge. Inside the basin it gives way to the bands;
+            // outside it fades as the water gathers.
+            var o = 0.16 + 0.16 * Math.sin(Math.PI * (i + 3) / (N + 6)), inside = o * (1 - gt), outside = o * (1 - g);
+            var grad = ctx.createRadialGradient(60, 60, 0, 60, 60, 60);
+            grad.addColorStop(0, 'rgba(' + pal.ink + ',' + inside + ')');
+            grad.addColorStop(39.5 / 60, 'rgba(' + pal.ink + ',' + inside + ')');
+            grad.addColorStop(41 / 60, 'rgba(' + pal.ink + ',' + outside + ')');
+            grad.addColorStop(1, 'rgba(' + pal.ink + ',0)');
+            line(ctx, ys); ctx.lineWidth = 0.75; ctx.strokeStyle = grad; ctx.stroke();
+
+            if (gt > 0) for (var s = 0; s < 4; s++) {
+              var any = false;
+              for (j = 0; j < xs.length; j++) {
+                hs[j] = cover(s, xs[j], ys[j]) * STEP * cs[j] * 0.78 * gt;
+                if (hs[j] > 0.05) any = true;
+              }
+              if (any) layers[s].push([Float64Array.from(ys), Float64Array.from(hs)]);
+            }
+          }
+          for (var s2 = 0; s2 < 4; s2++) {
+            if (!layers[s2].length) continue;
+            lctx.setTransform(1, 0, 0, 1, 0, 0); lctx.clearRect(0, 0, px, px);
+            lctx.setTransform(k, 0, 0, k, 0, 0);
+            lctx.fillStyle = 'rgb(' + pal.sepia + ')';
+            layers[s2].forEach(function (L) { line(lctx, L[0], L[1]); lctx.fill(); });
+            ctx.save(); ctx.setTransform(1, 0, 0, 1, 0, 0); ctx.globalAlpha = TONES[s2];
+            ctx.drawImage(layer, 0, 0); ctx.restore();
+          }
+
+          var ring = smooth(0.15, 0.85, g);
+          if (ring > 0) {
+            ctx.beginPath(); ctx.arc(60, 60, 46.1, -Math.PI / 2, -Math.PI / 2 + Math.PI * 2 * ring);
+            ctx.strokeStyle = 'rgb(' + pal.ink + ')'; ctx.lineWidth = 2; ctx.lineCap = 'round'; ctx.stroke();
+          }
+
+          if (t >= 2.4) { finish(); return; }
+          requestAnimationFrame(frame);
+        }
+        requestAnimationFrame(frame);
       }
     })();
   </script>

@@ -8,7 +8,8 @@ the days pass and is gone in a week by default. There is no archive and no
 search: once a note fades on its own it cannot be recovered, which is the
 point. Notes deleted by hand sit in Trash for 30 days first.
 
-- Platform: iPhone, iOS 27.0 or later. No iPad or Mac app.
+- Platform: iPhone, iOS 27.0 or later, with a companion app for Apple Watch.
+  No iPad or Mac app.
 - Price: free, no ads, no account. An optional supporter purchase unlocks
   "never", a note released that way stays until you delete it.
 - Pinning is free and pauses a note's fade until you unpin it. Unpinning starts
@@ -21,6 +22,18 @@ point. Notes deleted by hand sit in Trash for 30 days first.
 - Notes cannot be edited. A note stays what you wrote when you wrote it.
 - Widgets for the Home Screen, Lock Screen and Control Center, plus a share
   sheet extension.
+- Voice notes: hold the mic and talk. The note keeps the recording and the
+  words, transcribed on the iPhone in English or Czech only (it tries English,
+  then Czech; other languages are recorded but transcribed wrong). A voice note
+  fades like any other, recording included.
+- Action Button: assign pensieve's "record a voice note" shortcut to it and a
+  press records with the app closed. The take shows as a Live Activity in the
+  Dynamic Island; a second press keeps it. Siri and Shortcuts can run the same
+  shortcut.
+- Apple Watch: the companion app records a note from the wrist or its
+  complication and sends it to the iPhone. The Digital Crown picks how long the
+  note lasts.
+- Optional Face ID or passcode lock, off by default.
 
 ## Pages
 

@@ -6,7 +6,6 @@
   --rule:       #2d2d2d;
   --accent:     #b09070;
   --nav-bg:     rgba(0, 0, 0, 0.72);
-  --icon-shadow:rgba(0, 0, 0, 0.50) 0 4px 12px, rgba(0, 0, 0, 0.42) 0 16px 48px;
 
   --font: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", system-ui, sans-serif;
 
@@ -132,10 +131,19 @@ picture[data-reveal] { display: inline-block; }
   justify-content: space-between;
 }
 .nav-wordmark {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
   font-size: 1.0625rem;
   font-weight: 600;
   letter-spacing: -0.022em;
   color: var(--ink);
+}
+/* The water mark beside the name: same files as the hero, at nav size. */
+.nav-mark {
+  display: block;
+  width: 22px;
+  height: 22px;
 }
 .nav-link {
   font-size: 0.875rem;
@@ -173,17 +181,36 @@ picture[data-reveal] { display: inline-block; }
   display: flex;
   justify-content: center;
 }
-.app-icon-img {
-  width: 72px;
-  height: 72px;
-  border-radius: 17px;   /* concentric with the 112px icon's 26px */
-  box-shadow: var(--icon-shadow);
-  /* 1px hairline inset by -1px, so the icon keeps an edge on either ground
-     instead of bleeding into the page where its artwork meets it. */
-  outline: 1px solid rgba(255, 255, 255, 0.08);
-  outline-offset: -1px;
-  display: block;
+/* The water mark, bare on the page: no icon square, no shadow, the disc is its
+   own edge. The canvas the gather script draws sits exactly over the image;
+   the image is hidden only while that drawing runs, and fades in over it at
+   the end, so what holds is the real mark. */
+.hero-mark {
+  position: relative;
+  width: 96px;
+  height: 96px;
+  /* The disc is 78.5% of the box; pull the box left by the margin that leaves
+     so the ring, not the empty corner, lines up with the headline. Reset once
+     the hero centres itself (responsive, below). */
+  margin-left: -10px;
 }
+.hero-mark-img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  transition: opacity 0.45s var(--ease-out);
+}
+.hero-mark.is-gathering .hero-mark-img { opacity: 0; transition: none; }
+.hero-mark.is-gathering .hero-mark-gather { transition: none; }
+.hero-mark-gather {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  transition: opacity 0.45s var(--ease-out);
+}
+.hero-mark-gather.is-gone { opacity: 0; }
 .hero-title {
   font-size: 4.25rem;
   font-weight: 700;
@@ -702,6 +729,97 @@ html:not(.js) .demo { display: none; }
   animation: pensieve-ghost 2s var(--ease-out) forwards;
 }
 
+/* ─ voice ────────────────────────────────────────────────── */
+/* The copy and one phone side by side, then the two ways in that need no
+   screen as a pair of feature cards. Same type, cards and frame as the
+   sections around it: nothing here is a new kind of thing. */
+.voice {
+  padding: 5rem 1.5rem;
+}
+.voice-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 17.5rem);
+  gap: 4rem;
+  align-items: center;
+}
+.voice-copy h2 {
+  font-size: 3rem;
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  line-height: 1.05;
+  color: var(--ink);
+  margin-bottom: 0.75rem;
+}
+.voice-copy p {
+  font-size: 1.1875rem;
+  font-weight: 300;
+  letter-spacing: -0.01em;
+  color: var(--muted);
+  max-width: 46ch;
+}
+.voice-ways {
+  margin-top: 3rem;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 2px;
+}
+/* The picture takes the card's leftover height and sits in the middle of it,
+   so the island, much shorter than the watch beside it, does not hang at the
+   bottom of an empty card. */
+.island-stage,
+.watch-stage {
+  flex-grow: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding-top: 1.25rem;
+}
+/* The compact Dynamic Island, VoiceTakeLiveActivity's layout: waveform
+   leading, clock trailing. Black in both themes, as the island is. */
+.island {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: min(14.5rem, 100%);
+  height: 2.25rem;
+  padding: 0 1rem 0 0.875rem;
+  border-radius: 999px;
+  background: #000000;
+}
+.island-wave {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  height: 16px;
+}
+.island-wave i {
+  display: block;
+  width: 3px;
+  height: calc(var(--h) * 16px);
+  border-radius: 1.5px;
+  background: #e0817a;
+}
+.island-clock {
+  font-size: 0.875rem;
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+  color: #f6f3ed;
+}
+/* The watch capture is the bare 416x496 screen; the radius and the dark ring
+   stand in for the case, the way the iPhone bezel does for the phone shots. */
+.watch-shot {
+  display: block;
+  width: 208px;
+  max-width: 100%;
+  height: auto;
+  border-radius: 40px;
+  background: #000000;
+  box-shadow:
+    0 0 0 6px #2a2a2c,
+    rgba(41, 32, 24, 0.20) 0 6px 16px,
+    rgba(41, 32, 24, 0.32) 0 24px 50px;
+}
+
 /* ─ widgets ──────────────────────────────────────────────── */
 .widgets {
   padding: 5rem 1.5rem;
@@ -927,10 +1045,18 @@ html.js .faq-answer.is-open {
   flex-wrap: wrap;
 }
 .footer-name {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4375rem;
   font-size: 0.875rem;
   font-weight: 500;
   color: var(--ink);
   letter-spacing: -0.01em;
+}
+.footer-mark {
+  display: block;
+  width: 18px;
+  height: 18px;
 }
 .footer-links {
   display: flex;
@@ -1020,9 +1146,12 @@ html.js .faq-answer.is-open {
     gap: 2.5rem;
   }
   .hero-copy { align-items: center; text-align: center; }
+  .hero-mark { margin-left: 0; }
   .app-widget-row { grid-template-columns: 1fr; max-width: 21.25rem; margin: 0 auto; }
   .hero-cta  { align-items: center; }
   .hero-sub  { max-width: 26.25rem; }
+  .voice-grid { grid-template-columns: minmax(0, 1fr); gap: 2.5rem; }
+  .voice-shot { width: min(17.5rem, 100%); margin: 0 auto; }
 }
 
 @media (max-width: 40em) {
@@ -1031,6 +1160,7 @@ html.js .faq-answer.is-open {
   .mechanic,
   .demo,
   .features,
+  .voice,
   .widgets,
   .privacy,
   .faq,
@@ -1045,7 +1175,8 @@ html.js .faq-answer.is-open {
   .closing-line { font-size: 1.5rem; }
 
   .mechanic .wrap,
-  .features-grid {
+  .features-grid,
+  .voice-ways {
     grid-template-columns: minmax(0, 1fr);
     gap: 2px;
   }
@@ -1060,6 +1191,7 @@ html.js .faq-answer.is-open {
 
   .features-header h2,
   .demo-header h2,
+  .voice-copy h2,
   .widgets h2 { font-size: 2.125rem; }
 
   .footer .wrap {
@@ -1073,7 +1205,8 @@ html.js .faq-answer.is-open {
   .hero-title { font-size: 3.5rem; }
 
   .mechanic .wrap,
-  .features-grid { grid-template-columns: minmax(0, 1fr); }
+  .features-grid,
+  .voice-ways { grid-template-columns: minmax(0, 1fr); }
   .mechanic-step:first-child,
   .feature-card:first-child { border-radius: var(--r-card) var(--r-card) 0 0; }
   .mechanic-step:last-child,
@@ -1121,9 +1254,7 @@ html.js .faq-answer.is-open {
     --rule:        #d2d2d7;
     --accent:      #744f34;
     --nav-bg:      rgba(255, 255, 255, 0.82);
-    --icon-shadow: rgba(41, 32, 24, 0.10) 0 4px 12px, rgba(41, 32, 24, 0.10) 0 16px 48px;
   }
-  .app-icon-img { outline-color: rgba(0, 0, 0, 0.08); }
 }
 
 /* ─ reduced transparency ─────────────────────────────────── */
@@ -1173,7 +1304,7 @@ html.js .faq-answer.is-open {
    doesn't collapse.
    Not applied to .hero: it is on screen at load, so skipping it would cost a
    frame rather than save one. */
-.mechanic, .demo, .features, .widgets, .privacy, .faq, .closing, .footer {
+.mechanic, .demo, .features, .voice, .widgets, .privacy, .faq, .closing, .footer {
   content-visibility: auto;
   contain-intrinsic-size: auto 900px;
 }
