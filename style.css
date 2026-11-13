@@ -140,10 +140,16 @@ picture[data-reveal] { display: inline-block; }
   color: var(--ink);
 }
 /* The water mark beside the name: same files as the hero, at nav size. */
+/* Centred on the lowercase letters, not on the line box. `align-items: center`
+   centres the mark on the text's line box, which holds room for capitals and
+   ascenders that "pensieve" does not have, so the mark sat 1.5px above the
+   middle of the letters (measured 2026-11-13: mark centre 26.0px, x-height
+   centre 27.5px, SF 600 at 17px). The same in the footer, 1.8px at 14px. */
 .nav-mark {
   display: block;
   width: 22px;
   height: 22px;
+  transform: translateY(1.5px);
 }
 .nav-link {
   font-size: 0.875rem;
@@ -1057,6 +1063,7 @@ html.js .faq-answer.is-open {
   display: block;
   width: 18px;
   height: 18px;
+  transform: translateY(1.8px); /* see .nav-mark */
 }
 .footer-links {
   display: flex;

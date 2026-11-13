@@ -10,11 +10,13 @@
   <!-- The water mark as the tab icon: mark.svg is the shipped icon's art (the
        Water Mark Lab's settings, DESIGN.md §05) with its paths simplified and
        its square ground left off, ~7 KB. The PNG is the fallback for a browser
-       that takes no SVG icon; it is the 192px one, not the 1024px icon.png,
-       which was a 66 KB download for a 16px tab. -->
-  <link rel="icon" href="icon-192.png" sizes="192x192" type="image/png">
+       that takes no SVG icon, at the 32px a tab draws, not the 1024px icon.png.
+       Both PNGs have names no earlier version of the site used: Safari keeps a
+       site's favicon by URL and kept showing the old lettermark from icon.png
+       after icon.png had become the water mark (2026-11-13). -->
+  <link rel="icon" href="favicon-32.png" sizes="32x32" type="image/png">
   <link rel="icon" href="mark.svg" type="image/svg+xml">
-  <link rel="apple-touch-icon" href="icon.png">
+  <link rel="apple-touch-icon" href="apple-touch-icon.png">
   <link rel="manifest" href="site.webmanifest">
   <!-- Light and dark, decided by the reader's system and nothing else. There
        was a three-way toggle here until 2026-09-16; it went because Safari
